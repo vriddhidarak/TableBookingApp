@@ -23,7 +23,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/register")
+    @PostMapping(path="/register")
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody User user) {
         UserResponseDTO newUser = userService.saveUser(user);
         return ResponseEntity.ok(newUser);
