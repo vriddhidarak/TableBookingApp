@@ -1,7 +1,7 @@
 package com.vriddhi.tablebookingapp.controller;
 
-
 import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
+import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
 import com.vriddhi.tablebookingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +18,20 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<Iterable<User>> getUsers() {
-        Iterable<User> users = userService.getUsers();
+    public ResponseEntity<Iterable<UserResponseDTO>> getUsers() {
+        Iterable<UserResponseDTO> users = userService.getUsers();
         return ResponseEntity.ok(users);
     }
+
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User newUser = userService.saveUser(user);
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody User user) {
+        UserResponseDTO newUser = userService.saveUser(user);
         return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
-        User user = userService.loginUser(loginRequestDTO);
+    public ResponseEntity<UserResponseDTO> loginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
+        UserResponseDTO user = userService.loginUser(loginRequestDTO);
         if (user != null) {
             return ResponseEntity.ok(user);
         }
@@ -38,15 +39,15 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable Long userId) {
-        Optional<User> user = userService.getUserById(userId);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long userId) {
+        Optional<UserResponseDTO> user = userService.getUserById(userId);
+        return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId, @RequestBody User user) {
         user.setUserId(userId);
-        User updatedUser = userService.saveUser(user);
+        UserResponseDTO updatedUser = userService.saveUser(user);
         return ResponseEntity.ok(updatedUser);
     }
 

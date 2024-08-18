@@ -16,7 +16,9 @@ public class RestaurantService {
     private RestaurantRepository restaurantRepository;
 
     public List<Restaurant> getAllRestaurants() {
+
         return restaurantRepository.findAll();
+        
     }
 
     public Optional<Restaurant> getRestaurantById(Long restaurantId) {
