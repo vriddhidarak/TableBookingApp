@@ -32,14 +32,14 @@ public class TableController {
     public ResponseEntity<Table> createTable(@PathVariable Long restaurantId, @RequestBody Table table) {
         table.setRestaurant(new Restaurant());
         table.getRestaurant().setRestaurantId(restaurantId);
-        Table newTable = tableService.saveTable(table);
+        Table newTable = tableService.saveTable(table,restaurantId);
         return ResponseEntity.ok(newTable);
     }
 
     @PutMapping("/{tableId}")
-    public ResponseEntity<Table> updateTable(@PathVariable Long tableId, @RequestBody Table table) {
+    public ResponseEntity<Table> updateTable(@PathVariable Long restaurantId,@PathVariable Long tableId, @RequestBody Table table) {
         table.setTableId(tableId);
-        Table updatedTable = tableService.saveTable(table);
+        Table updatedTable = tableService.saveTable(table,restaurantId);
         return ResponseEntity.ok(updatedTable);
     }
 
