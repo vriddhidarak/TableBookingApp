@@ -36,14 +36,6 @@ public class UserController {
         }
         return ResponseEntity.status(401).build();
     }
-//    @PostMapping("/login")
-//    public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password) {
-//        User user = userService.getUserByEmail(email);
-//        if (user != null && user.getPassword().equals(password)) {
-//            return ResponseEntity.ok(user);
-//        }
-//        return ResponseEntity.status(401).build();
-//    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
