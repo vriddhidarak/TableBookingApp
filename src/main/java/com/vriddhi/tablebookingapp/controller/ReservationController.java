@@ -1,5 +1,6 @@
 package com.vriddhi.tablebookingapp.controller;
 
+import com.vriddhi.tablebookingapp.dto.ReservationDTO;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity<Reservation> createReservation(@RequestBody ReservationDTO reservation) {
         Reservation newReservation = reservationService.saveReservation(reservation);
         return ResponseEntity.ok(newReservation);
     }

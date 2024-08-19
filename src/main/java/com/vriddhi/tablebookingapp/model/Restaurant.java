@@ -25,6 +25,7 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant")
     @JsonManagedReference("restaurant-table")
+    @ToString.Exclude
     private List<Table> tables;
 
     @OneToMany(mappedBy = "restaurant")

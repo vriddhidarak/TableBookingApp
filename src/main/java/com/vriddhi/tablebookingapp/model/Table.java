@@ -11,8 +11,7 @@ import java.util.List;
 
 @Entity
 @jakarta.persistence.Table(name = "tables")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Table {
@@ -28,10 +27,12 @@ public class Table {
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonBackReference("restaurant-table")
+    @ToString.Exclude
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "table")
     @JsonManagedReference("table-reservation")
+    @ToString.Exclude
     private List<Reservation> reservations;
 }
 
