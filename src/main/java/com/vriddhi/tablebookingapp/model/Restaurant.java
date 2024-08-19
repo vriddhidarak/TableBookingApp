@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @jakarta.persistence.Table(name = "restaurants")
@@ -37,8 +36,5 @@ public class Restaurant {
     @JsonManagedReference("restaurant-ratingReview")
     private List<RatingReview> ratingReviews;
 
-    public void setTables(List<Table> tables) {
-        this.tables = tables;
-        this.restaurantTotalTableCount = tables != null ? tables.size() : 0;
-    }
+
 }

@@ -2,6 +2,7 @@ package com.vriddhi.tablebookingapp.service;
 
 
 import com.vriddhi.tablebookingapp.dto.ReservationDTO;
+import com.vriddhi.tablebookingapp.exception.ReservationConflictException;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
@@ -13,6 +14,7 @@ import com.vriddhi.tablebookingapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +35,21 @@ public class ReservationService {
 
     public Reservation saveReservation(ReservationDTO reservation) {
         System.out.println("ReservationService.saveReservation DTO  "+ reservation);
+        Table table = tableRepository.findById(reservation.getTableId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid table ID"));
+        LocalDateTime reservationTime = reservation.getReservationDateTime();
+
+        Optional<Reservation> existingReservation = reservationRepository.findByTableAndReservationDateTime(table, reservationTime);
+        if (existingReservation.isPresent()) {
+            throw new ReservationConflictException("Reservation conflict: Table is already reserved at this time.");
+        }
         Reservation newReservation = new Reservation();
         User user = userRepository.findById(reservation.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        Table table = tableRepository.findById(reservation.getTableId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid table ID"));
+
+        if(reservation.getPartySize() > table.getTotalSeats()) {
+            throw new IllegalArgumentException("Party size exceeds table capacity");
+        }
         Restaurant restaurant = restaurantRepository.findById(reservation.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid restaurant ID"));
 
