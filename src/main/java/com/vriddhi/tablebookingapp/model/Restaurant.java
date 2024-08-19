@@ -19,6 +19,7 @@ public class Restaurant {
 
     private String restaurantName;
     private String restaurantLocation;
+
     private int restaurantTotalTableCount;
     private String restaurantDescription;
     private String restaurantCity;
@@ -35,4 +36,9 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     @JsonManagedReference("restaurant-ratingReview")
     private List<RatingReview> ratingReviews;
+
+    public void setTables(List<Table> tables) {
+        this.tables = tables;
+        this.restaurantTotalTableCount = tables != null ? tables.size() : 0;
+    }
 }

@@ -1,7 +1,11 @@
 package com.vriddhi.tablebookingapp.controller;
 
+import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
+import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.service.RatingReviewService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +17,12 @@ import java.util.Optional;
 @RequestMapping("/api/ratings-reviews")
 public class RatingReviewController {
 
+    private static final Logger log = LoggerFactory.getLogger(RatingReviewController.class);
     @Autowired
     private RatingReviewService ratingReviewService;
 
     @PostMapping
-    public ResponseEntity<RatingReview> createRatingReview(@RequestBody RatingReview ratingReview) {
+    public ResponseEntity<RatingReview> createRatingReview(@RequestBody RatingReviewDTO ratingReview) {
         RatingReview newRatingReview = ratingReviewService.saveRatingReview(ratingReview);
         return ResponseEntity.ok(newRatingReview);
     }

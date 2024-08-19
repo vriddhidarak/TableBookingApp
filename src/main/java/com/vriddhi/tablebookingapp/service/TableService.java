@@ -31,6 +31,7 @@ public class TableService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
         table.setRestaurant(restaurant);
+        restaurant.setRestaurantTotalTableCount(restaurant.getRestaurantTotalTableCount() + 1);
         return tableRepository.save(table);
     }
 
