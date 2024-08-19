@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -33,10 +34,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference("user-reservation")
+    @ToString.Exclude
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference("user-ratingReview")
+    @ToString.Exclude
     private List<RatingReview> ratingReviews;
 }
 

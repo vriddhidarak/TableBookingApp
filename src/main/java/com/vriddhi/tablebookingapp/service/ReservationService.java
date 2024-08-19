@@ -55,12 +55,22 @@ public class ReservationService {
         return reservationRepository.findById(reservationId);
     }
 
-    public List<Reservation> getReservationsByUserId(Long userId) {
-        return reservationRepository.findAll(); // Modify this to filter by userId
-    }
+   public void deleteReservation(Long reservationId) {
 
-    public void deleteReservation(Long reservationId) {
-        reservationRepository.deleteById(reservationId);
+        try {
+            reservationRepository.deleteById(reservationId);
+
+        }
+        catch (Exception e) {
+            System.out.println("Error deleting reservation: " + e.getMessage());
+        }
+    }
+    public List<Reservation> getReservationsByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return reservationRepository.findByUser(user);
+    }
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
     }
 }
 

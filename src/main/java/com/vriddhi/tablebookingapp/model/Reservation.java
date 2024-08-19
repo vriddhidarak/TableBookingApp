@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -29,16 +30,19 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference("user-reservation")
+    @ToString.Exclude
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "table_id", nullable = false)
     @JsonBackReference("table-reservation")
+    @ToString.Exclude
     private com.vriddhi.tablebookingapp.model.Table table;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonBackReference("restaurant-reservation")
+    @ToString.Exclude
     private Restaurant restaurant;
 
     private LocalDateTime reservationDateTime;
