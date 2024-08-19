@@ -1,6 +1,7 @@
 package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.ReservationDTO;
+import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,24 +21,24 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
+    public List<ReservationResponseDTO> getAllReservations() {
         return reservationService.getAllReservations();
     }
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody ReservationDTO reservation) {
-        Reservation newReservation = reservationService.saveReservation(reservation);
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationDTO reservation) {
+        ReservationResponseDTO newReservation = reservationService.saveReservation(reservation);
         return ResponseEntity.ok(newReservation);
     }
 
     @GetMapping("/{reservationId}")
-    public ResponseEntity<Reservation> getReservation(@PathVariable Long reservationId) {
-        Optional<Reservation> reservation = reservationService.getReservationById(reservationId);
+    public ResponseEntity<ReservationResponseDTO> getReservation(@PathVariable Long reservationId) {
+        Optional<ReservationResponseDTO> reservation = reservationService.getReservationById(reservationId);
 
         return reservation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/{userId}")
-    public List<Reservation> getReservationsByUser(@PathVariable Long userId) {
+    public List<ReservationResponseDTO> getReservationsByUser(@PathVariable Long userId) {
         return reservationService.getReservationsByUserId(userId);
     }
 

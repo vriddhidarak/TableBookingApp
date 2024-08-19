@@ -1,6 +1,7 @@
 package com.vriddhi.tablebookingapp.service;
 
 import com.vriddhi.tablebookingapp.dto.ReservationDTO;
+import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
 import com.vriddhi.tablebookingapp.exception.InvalidInputException;
 import com.vriddhi.tablebookingapp.exception.ReservationConflictException;
 import com.vriddhi.tablebookingapp.model.Reservation;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -28,9 +30,7 @@ public class ReservationService {
     private final RestaurantRepository restaurantRepository;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository,
-                              UserRepository userRepository,
-                              TableRepository tableRepository,
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, TableRepository tableRepository,
                               RestaurantRepository restaurantRepository) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
@@ -39,7 +39,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation saveReservation(ReservationDTO reservationDTO) {
+    public ReservationResponseDTO saveReservation(ReservationDTO reservationDTO) {
         Table table = tableRepository.findById(reservationDTO.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid table ID"));
 
@@ -52,11 +52,14 @@ public class ReservationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid restaurant ID"));
 
         Reservation newReservation = mapToReservationEntity(reservationDTO, user, table, restaurant);
-        return reservationRepository.save(newReservation);
+        Reservation savedReservation = reservationRepository.save(newReservation);
+
+        return mapToReservationResponseDTO(savedReservation);
     }
 
-    public Optional<Reservation> getReservationById(Long reservationId) {
-        return reservationRepository.findById(reservationId);
+    public Optional<ReservationResponseDTO> getReservationById(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .map(this::mapToReservationResponseDTO);
     }
 
     @Transactional
@@ -64,14 +67,20 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
-    public List<Reservation> getReservationsByUserId(Long userId) {
+    public List<ReservationResponseDTO> getReservationsByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        return reservationRepository.findByUser(Optional.of(user));
+        return reservationRepository.findByUser(Optional.of(user))
+                .stream()
+                .map(this::mapToReservationResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
+    public List<ReservationResponseDTO> getAllReservations() {
+        return reservationRepository.findAll()
+                .stream()
+                .map(this::mapToReservationResponseDTO)
+                .collect(Collectors.toList());
     }
 
     private void validateReservation(ReservationDTO reservationDTO, Table table) {
@@ -96,5 +105,16 @@ public class ReservationService {
         reservation.setTable(table);
         reservation.setRestaurant(restaurant);
         return reservation;
+    }
+
+    private ReservationResponseDTO mapToReservationResponseDTO(Reservation reservation) {
+        ReservationResponseDTO responseDTO = new ReservationResponseDTO();
+        responseDTO.setReservationId(reservation.getReservationId());
+        responseDTO.setReservationDateTime(reservation.getReservationDateTime());
+        responseDTO.setPartySize(reservation.getPartySize());
+        responseDTO.setUser(reservation.getUser());
+        responseDTO.setTable(reservation.getTable());
+        responseDTO.setRestaurant(reservation.getRestaurant());
+        return responseDTO;
     }
 }
