@@ -6,8 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
 import java.util.List;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 @jakarta.persistence.Table(name = "users")
@@ -20,15 +24,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Size(min = 1, max = 100)
+    @NotNull
     private String userName;
 
+    @Email(regexp = "^[A-Za-z0-9._%+-]+@[a-z]\\.com$", message = "email should be a valid mail")
+    @NotNull
     @Column(unique = true)
     private String email;
 
+    @Size(min = 8, message = "password must be greater than 8 characters")
+    @NotNull
     private String password;
 
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
+    @NotNull
     private String phone;
 
+    @NotNull
     private String userAddress;
 
 

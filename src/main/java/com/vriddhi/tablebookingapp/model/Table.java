@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -20,7 +21,10 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tableId;
 
+    @NotNull
     private int tableNumber;
+
+    @NotNull
     private int totalSeats;
 
 

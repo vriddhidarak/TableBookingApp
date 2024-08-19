@@ -8,6 +8,7 @@ import com.vriddhi.tablebookingapp.repository.RestaurantRepository;
 import com.vriddhi.tablebookingapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +25,13 @@ public class RatingReviewService {
     @Autowired
     private RatingReviewRepository ratingReviewRepository;
 
+    @Transactional
     public RatingReview saveRatingReview(RatingReviewDTO ratingReview) {
         RatingReview ratingReview1 = new RatingReview();
         ratingReview1.setRating(ratingReview.getRating());
         ratingReview1.setReview(ratingReview.getReview());
         ratingReview1.setRestaurant(restaurantRepository.findById(ratingReview.getRestaurantId()).get());
         ratingReview1.setUser(userRepository.findById(ratingReview.getUserId()).get());
-//        userRepository.findById(ratingReview.getUserId()).get().getRatingReviews().add(ratingReview1);
-//        restaurantRepository.findById(ratingReview.getRestaurantId()).get().getRatingReviews().add(ratingReview1);
         return ratingReviewRepository.save(ratingReview1);
     }
 
@@ -44,6 +44,7 @@ public class RatingReviewService {
         return ratingReviewRepository.findByRestaurant(restaurant); // Modify this to filter by restaurantId
     }
 
+    @Transactional
     public void deleteRatingReview(Long ratingId) {
         ratingReviewRepository.deleteById(ratingId);
     }

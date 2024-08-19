@@ -7,6 +7,7 @@ import com.vriddhi.tablebookingapp.repository.RestaurantRepository;
 import com.vriddhi.tablebookingapp.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class TableService {
         return tableRepository.findById(tableId);
     }
 
+    @Transactional
     public Table saveTable(Table table, Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
@@ -35,6 +37,7 @@ public class TableService {
         return tableRepository.save(table);
     }
 
+    @Transactional
     public void deleteTable(Long tableId) {
         tableRepository.deleteById(tableId);
     }
