@@ -68,9 +68,9 @@ public class ReservationController {
     @Operation(summary = "Delete Reservation", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted Reservation")
     })
-    public ResponseEntity<String> deleteReservation(@PathVariable Long reservationId) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long reservationId) {
         log.info("ReservationController.deleteReservation  {}", reservationId);
         reservationService.deleteReservation(reservationId);
-        return new ResponseEntity<>("Reservation deleted successfully", null, 200);
+        return ResponseEntity.noContent().build();
     }
 }

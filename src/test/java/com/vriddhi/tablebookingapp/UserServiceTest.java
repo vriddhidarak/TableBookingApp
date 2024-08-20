@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -77,7 +78,7 @@ class UserServiceTest {
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
 
-        List<UserResponseDTO> result = userService.getUsers();
+        Set<UserResponseDTO> result = userService.getUsers();
 
 
         assertEquals(2, result.size());

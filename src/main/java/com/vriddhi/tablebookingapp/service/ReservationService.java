@@ -22,21 +22,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ReservationService {
-
-    private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
-    private final TableRepository tableRepository;
-    private final RestaurantRepository restaurantRepository;
+public class ReservationService implements ReservationServiceInterface {
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, TableRepository tableRepository,
-                              RestaurantRepository restaurantRepository) {
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-        this.tableRepository = tableRepository;
-        this.restaurantRepository = restaurantRepository;
-    }
+    private ReservationRepository reservationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TableRepository tableRepository;
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
 
     @Transactional
     public ReservationResponseDTO saveReservation(ReservationDTO reservationDTO) {
@@ -58,8 +55,7 @@ public class ReservationService {
     }
 
     public Optional<ReservationResponseDTO> getReservationById(Long reservationId) {
-        return reservationRepository.findById(reservationId)
-                .map(this::mapToReservationResponseDTO);
+        return reservationRepository.findById(reservationId).map(this::mapToReservationResponseDTO);
     }
 
     @Transactional

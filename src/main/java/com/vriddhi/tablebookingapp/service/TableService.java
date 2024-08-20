@@ -13,23 +13,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TableService {
+public class TableService implements TableServiceInterface {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
     @Autowired
     private TableRepository tableRepository;
 
+    @Override
     public List<Table> getTablesByRestaurantId(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
         return tableRepository.findByRestaurant(restaurant);
     }
 
+    @Override
     public Optional<Table> getTableById(Long tableId) {
         return tableRepository.findById(tableId);
     }
 
+    @Override
     @Transactional
     public Table saveTable(Table table, Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
@@ -39,6 +42,7 @@ public class TableService {
         return tableRepository.save(table);
     }
 
+    @Override
     @Transactional
     public void deleteTable(Long tableId) {
         tableRepository.deleteById(tableId);

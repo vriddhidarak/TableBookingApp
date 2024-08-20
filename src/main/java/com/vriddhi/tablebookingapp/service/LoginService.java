@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginService {
+public class LoginService implements LoginServiceInterface {
 
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public UserResponseDTO loginUser(LoginRequestDTO loginRequestDTO) {
         User user = userRepository.findByEmail(loginRequestDTO.getEmail());
 

@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-
 @Entity
 @jakarta.persistence.Table(name = "users")
 @Data
@@ -56,7 +55,6 @@ public class User {
     private List<RatingReview> ratingReviews;
 
 
-    // New constructor
     public User(long userId, String userName, String email, String password, String phone, String userAddress) {
         this.userId = userId;
         this.userName = userName;

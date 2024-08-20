@@ -3,6 +3,7 @@ package com.vriddhi.tablebookingapp.controller;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
 import com.vriddhi.tablebookingapp.service.RestaurantService;
+import com.vriddhi.tablebookingapp.service.RestaurantServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class RestaurantController {
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceInterface restaurantService;
 
     @GetMapping
     @Operation(summary = "Get all restaurants", responses = {

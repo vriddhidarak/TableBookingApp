@@ -39,9 +39,9 @@ public class Table {
     @ToString.Exclude
     private List<Reservation> reservations;
 
-    public Table(long l, String s, int i, Restaurant restaurant) {
+    public Table(long l, int s, int i, Restaurant restaurant) {
         this.tableId = l;
-        this.tableNumber = i;
+        this.tableNumber = s;
         this.totalSeats = i;
         this.restaurant = restaurant;
     }
