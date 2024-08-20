@@ -19,22 +19,16 @@ public class RestaurantService {
 
 
     public List<Restaurant> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-        for (Restaurant restaurant : restaurants) {
-            updateRestaurantTotalTableCount(restaurant);
-        }
         return restaurantRepository.findAll();
-        
     }
 
     public Optional<Restaurant> getRestaurantById(Long restaurantId) {
-        updateRestaurantTotalTableCount(restaurantRepository.findById(restaurantId).get());
         return restaurantRepository.findById(restaurantId);
     }
 
     @Transactional
     public Restaurant saveRestaurant(Restaurant restaurant) {
-        updateRestaurantTotalTableCount(restaurant);
+        restaurant.setRestaurantTotalTableCount(0);
         return restaurantRepository.save(restaurant);
     }
 
@@ -48,6 +42,5 @@ public class RestaurantService {
         List<Table> tables = restaurant.getTables();
         restaurant.setRestaurantTotalTableCount(tables != null ? tables.size() : 0);
         restaurantRepository.save(restaurant);
-
     }
 }

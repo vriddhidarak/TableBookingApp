@@ -40,10 +40,9 @@ public class Restaurant {
     private List<RatingReview> ratingReviews;
 
 
-    public Restaurant(long l, String testRestaurant, int i) {
+    public Restaurant(long l, String testRestaurant) {
         this.restaurantId = l;
         this.restaurantName = testRestaurant;
-        this.restaurantTotalTableCount = i;
 
     }
 }

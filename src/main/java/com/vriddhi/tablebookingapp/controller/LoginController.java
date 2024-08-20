@@ -3,6 +3,7 @@ package com.vriddhi.tablebookingapp.controller;
 import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.service.LoginService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping
+    @Operation(summary = "Login User")
     public ResponseEntity<UserResponseDTO> loginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
         UserResponseDTO user = loginService.loginUser(loginRequestDTO);
         if (user != null) {
