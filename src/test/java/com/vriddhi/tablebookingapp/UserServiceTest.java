@@ -34,6 +34,7 @@ class UserServiceTest {
     @Test
     void testSaveUser() {
 
+
         User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
         when(userRepository.save(user)).thenReturn(user);
 
