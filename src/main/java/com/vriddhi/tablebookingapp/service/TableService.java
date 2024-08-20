@@ -21,7 +21,9 @@ public class TableService {
     private TableRepository tableRepository;
 
     public List<Table> getTablesByRestaurantId(Long restaurantId) {
-        return tableRepository.findAll(); // Modify this to filter by restaurantId
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+        return tableRepository.findByRestaurant(restaurant);
     }
 
     public Optional<Table> getTableById(Long tableId) {

@@ -22,15 +22,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserResponseDTO loginUser(LoginRequestDTO loginRequestDTO) {
-        User user = userRepository.findByEmail(loginRequestDTO.getEmail());
-
-        if (user != null && user.getPassword().equals(loginRequestDTO.getPassword())) {
-            return mapToUserResponseDTO(user);
-        }
-
-        return null;
-    }
 
     @Transactional
     public UserResponseDTO saveUser(User user) {

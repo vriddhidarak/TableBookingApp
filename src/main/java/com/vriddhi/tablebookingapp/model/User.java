@@ -54,6 +54,18 @@ public class User {
     @JsonManagedReference("user-ratingReview")
     @ToString.Exclude
     private List<RatingReview> ratingReviews;
+
+
+    // New constructor
+    public User(long userId, String userName, String email, String password, String phone, String userAddress) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.userAddress = userAddress;
+    }
+
 }
 
 
