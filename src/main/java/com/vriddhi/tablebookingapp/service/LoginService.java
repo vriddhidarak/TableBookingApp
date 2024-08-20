@@ -5,7 +5,9 @@ import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.repository.UserRepository;
 import com.vriddhi.tablebookingapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LoginService {
 
     @Autowired
@@ -18,7 +20,9 @@ public class LoginService {
             return mapToUserResponseDTO(user);
         }
 
-        return null;
+        else {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
     }
 
     private UserResponseDTO mapToUserResponseDTO(User user) {

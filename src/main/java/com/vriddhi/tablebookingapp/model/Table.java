@@ -38,5 +38,12 @@ public class Table {
     @JsonManagedReference("table-reservation")
     @ToString.Exclude
     private List<Reservation> reservations;
+
+    public Table(long l, String s, int i, Restaurant restaurant) {
+        this.tableId = l;
+        this.tableNumber = i;
+        this.totalSeats = i;
+        this.restaurant = restaurant;
+    }
 }
 

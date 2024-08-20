@@ -1,6 +1,5 @@
 package com.vriddhi.tablebookingapp.service;
 
-import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
 import com.vriddhi.tablebookingapp.repository.UserRepository;
