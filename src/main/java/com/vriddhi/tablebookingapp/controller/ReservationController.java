@@ -4,7 +4,7 @@ import com.vriddhi.tablebookingapp.dto.ReservationDTO;
 import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.service.ReservationService;
+import com.vriddhi.tablebookingapp.service.ReservationServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class ReservationController {
 
     @Autowired
-    private ReservationService reservationService;
+    private ReservationServiceInterface reservationService;
 
     @GetMapping
     @Operation(summary = "Get all Reservation", responses = {

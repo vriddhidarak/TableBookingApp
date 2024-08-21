@@ -2,15 +2,13 @@ package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
-import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.service.RatingReviewService;
+import com.vriddhi.tablebookingapp.service.RatingReviewServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/ratings-reviews")
 public class RatingReviewController {
 
-    private static final Logger log = LoggerFactory.getLogger(RatingReviewController.class);
     @Autowired
-    private RatingReviewService ratingReviewService;
+    private RatingReviewServiceInterface ratingReviewService;
 
     @PostMapping
     @Operation(summary = "Get all Rating Review", responses = {

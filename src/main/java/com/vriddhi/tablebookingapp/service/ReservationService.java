@@ -1,7 +1,6 @@
 package com.vriddhi.tablebookingapp.service;
 
-import com.vriddhi.tablebookingapp.dto.ReservationDTO;
-import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
+import com.vriddhi.tablebookingapp.dto.*;
 import com.vriddhi.tablebookingapp.exception.InvalidInputException;
 import com.vriddhi.tablebookingapp.exception.ReservationConflictException;
 import com.vriddhi.tablebookingapp.model.Reservation;
@@ -108,9 +107,33 @@ public class ReservationService implements ReservationServiceInterface {
         responseDTO.setReservationId(reservation.getReservationId());
         responseDTO.setReservationDateTime(reservation.getReservationDateTime());
         responseDTO.setPartySize(reservation.getPartySize());
-        responseDTO.setUser(reservation.getUser());
-        responseDTO.setTable(reservation.getTable());
-        responseDTO.setRestaurant(reservation.getRestaurant());
+        responseDTO.setUser(mapToUserResponseDTO(reservation.getUser()));
+        responseDTO.setTable(mapToTableDTO(reservation.getTable()));
+        responseDTO.setRestaurant(mapToRestaurantDTO(reservation.getRestaurant()));
         return responseDTO;
+    }
+    private UserResponseDTO mapToUserResponseDTO(User user) {
+        UserResponseDTO responseDTO = new UserResponseDTO();
+        responseDTO.setUserId(user.getUserId());
+        responseDTO.setUserName(user.getUserName());
+        responseDTO.setEmail(user.getEmail());
+        responseDTO.setPhone(user.getPhone());
+        responseDTO.setUserAddress(user.getUserAddress());
+        return responseDTO;
+    }
+    private TableResponseDTO mapToTableDTO(Table table) {
+        TableResponseDTO tableResponseDTO = new TableResponseDTO();
+        tableResponseDTO.setTableId(table.getTableId());
+        tableResponseDTO.setTableNumber(table.getTableNumber());
+        tableResponseDTO.setTotalSeats(table.getTotalSeats());
+        return tableResponseDTO;
+    }
+    private RestaurantResponseDTO mapToRestaurantDTO(Restaurant restaurant) {
+        RestaurantResponseDTO restaurantResponseDTO = new RestaurantResponseDTO();
+        restaurantResponseDTO.setRestaurantId(restaurant.getRestaurantId());
+        restaurantResponseDTO.setRestaurantName(restaurant.getRestaurantName());
+        restaurantResponseDTO.setRestaurantLocation(restaurant.getRestaurantLocation());
+        restaurantResponseDTO.setRestaurantDescription(restaurant.getRestaurantDescription());
+        return restaurantResponseDTO;
     }
 }

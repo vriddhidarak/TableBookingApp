@@ -2,7 +2,6 @@ package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
-import com.vriddhi.tablebookingapp.service.UserService;
 import com.vriddhi.tablebookingapp.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

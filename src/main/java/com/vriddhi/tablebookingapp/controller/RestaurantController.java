@@ -2,7 +2,6 @@ package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.service.RestaurantService;
 import com.vriddhi.tablebookingapp.service.RestaurantServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

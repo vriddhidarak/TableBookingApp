@@ -16,7 +16,7 @@ public class ReservationResponseDTO {
     private Long reservationId;
     private LocalDateTime reservationDateTime;
     private int partySize;
-    private User user;
-    private Table table;
-    private Restaurant restaurant;
+    private UserResponseDTO user;
+    private TableResponseDTO table;
+    private RestaurantResponseDTO restaurant;
 }

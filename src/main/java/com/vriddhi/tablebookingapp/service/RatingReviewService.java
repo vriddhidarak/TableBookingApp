@@ -56,4 +56,6 @@ public class RatingReviewService implements RatingReviewServiceInterface {
         ratingReview1.setUser(userRepository.findById(ratingReviewDTO.getUserId()).get());
         return ratingReview1;
     }
+
+
 }

@@ -27,8 +27,7 @@ public class User {
     @NotNull
     private String userName;
 
-    @Email(regexp = "^[A-Za-z0-9._%+-]+@[a-z]\\.com$", message = "email should be a valid mail")
-    @NotNull
+    @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "email should be a valid mail")    @NotNull
     @Column(unique = true)
     private String email;
 

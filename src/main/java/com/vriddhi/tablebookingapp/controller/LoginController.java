@@ -2,22 +2,19 @@ package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
-import com.vriddhi.tablebookingapp.service.LoginService;
+import com.vriddhi.tablebookingapp.service.LoginServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.vriddhi.tablebookingapp.service.UserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired
-    private LoginService loginService;
+    private LoginServiceInterface loginService;
 
     @PostMapping
     @Operation(summary = "Login User")
@@ -28,4 +25,6 @@ public class LoginController {
         }
         return ResponseEntity.status(401).build();
     }
+
+
 }
