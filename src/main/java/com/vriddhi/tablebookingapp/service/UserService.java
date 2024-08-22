@@ -7,6 +7,9 @@ import com.vriddhi.tablebookingapp.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +19,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserService implements UserServiceInterface {
+public class UserService implements UserServiceInterface{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public UserResponseDTO saveUser(User user) {
         log.info("Saving user: {}", user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return mapToUserResponseDTO(userRepository.save(user));
     }
 
@@ -62,5 +69,17 @@ public class UserService implements UserServiceInterface {
 
     private UserResponseDTO mapToUserResponseDTO(User user) {
         return new UserResponseDTO(user.getUserId(), user.getUserName(), user.getEmail(), user.getPhone(), user.getUserAddress());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
     }
 }

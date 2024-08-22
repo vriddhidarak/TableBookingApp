@@ -1,88 +1,128 @@
 package com.vriddhi.tablebookingapp;
 
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
+import com.vriddhi.tablebookingapp.exception.ResourceNotFoundException;
 import com.vriddhi.tablebookingapp.model.User;
 import com.vriddhi.tablebookingapp.repository.UserRepository;
 import com.vriddhi.tablebookingapp.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
 import java.util.Optional;
-import java.util.List;
-import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class UserServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
+    private User user;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        user = new User(1L, "John Doe", "john.doe@example.com", "password123", "1234567890", "123 Main St");
     }
 
     @Test
     void testSaveUser() {
-
-
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.save(user)).thenReturn(user);
-
-
-        UserResponseDTO result = userService.saveUser(user);
-
-
-        assertNotNull(result);
-        assertEquals("John Doe", result.getUserName());
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        UserResponseDTO response = userService.saveUser(user);
+        assertNotNull(response);
+        assertEquals(user.getUserId(), response.getUserId());
         verify(userRepository, times(1)).save(user);
     }
 
     @Test
-    void testGetUserById() {
-
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
-
-        Optional<UserResponseDTO> result = userService.getUserById(1L);
-
-
-        assertTrue(result.isPresent());
-        assertEquals("John Doe", result.get().getUserName());
-        verify(userRepository, times(1)).findById(1L);
+    void testGetUserById_UserExists() {
+        when(userRepository.existsById(user.getUserId())).thenReturn(true);
+        when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+        Optional<UserResponseDTO> response = userService.getUserById(user.getUserId());
+        assertTrue(response.isPresent());
+        assertEquals(user.getUserId(), response.get().getUserId());
+        verify(userRepository, times(1)).existsById(user.getUserId());
+        verify(userRepository, times(1)).findById(user.getUserId());
     }
 
     @Test
-    void testDeleteUser() {
-
-        userService.deleteUser(1L);
-
-
-        verify(userRepository, times(1)).deleteById(1L);
+    void testGetUserById_UserDoesNotExist() {
+        when(userRepository.existsById(user.getUserId())).thenReturn(false);
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(user.getUserId()));
+        verify(userRepository, times(1)).existsById(user.getUserId());
+        verify(userRepository, times(0)).findById(user.getUserId());
     }
 
     @Test
-    void testGetUsers() {
+    void testDeleteUser_UserExists() {
+        when(userRepository.existsById(user.getUserId())).thenReturn(true);
+        doNothing().when(userRepository).deleteById(user.getUserId());
+        userService.deleteUser(user.getUserId());
+        verify(userRepository, times(1)).existsById(user.getUserId());
+        verify(userRepository, times(1)).deleteById(user.getUserId());
+    }
 
-        User user1 = new User(1L, "John Doe", "john@example.com", "password123", "1234567890", "123 Street");
-        User user2 = new User(2L, "Jane Doe", "jane@example.com", "password123", "0987654321", "456 Avenue");
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+    @Test
+    void testDeleteUser_UserDoesNotExist() {
+        when(userRepository.existsById(user.getUserId())).thenReturn(false);
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(user.getUserId()));
+        verify(userRepository, times(1)).existsById(user.getUserId());
+        verify(userRepository, times(0)).deleteById(user.getUserId());
+    }
 
-
-        Set<UserResponseDTO> result = userService.getUsers();
-
-
-        assertEquals(2, result.size());
+    @Test
+    void testGetUsers_UsersExist() {
+        when(userRepository.count()).thenReturn(1L);
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+        Set<UserResponseDTO> response = userService.getUsers();
+        assertFalse(response.isEmpty());
+        assertEquals(1, response.size());
+        verify(userRepository, times(1)).count();
         verify(userRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetUsers_NoUsersExist() {
+        when(userRepository.count()).thenReturn(0L);
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUsers());
+        verify(userRepository, times(1)).count();
+        verify(userRepository, times(0)).findAll();
+    }
+
+    @Test
+    void testSaveMultipleUsers() {
+        User user1 = new User(2L, "Jane Doe", "jane.doe@example.com", "password123", "0987654321", "456 Main St");
+        User user2 = new User(3L, "Alice Smith", "alice.smith@example.com", "password123", "1122334455", "789 Main St");
+
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user1).thenReturn(user2);
+
+        UserResponseDTO response1 = userService.saveUser(user1);
+        UserResponseDTO response2 = userService.saveUser(user2);
+
+        assertNotNull(response1);
+        assertEquals(user1.getUserId(), response1.getUserId());
+        assertNotNull(response2);
+        assertEquals(user2.getUserId(), response2.getUserId());
+
+        verify(userRepository, times(1)).save(user1);
+        verify(userRepository, times(1)).save(user2);
     }
 }

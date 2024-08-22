@@ -44,17 +44,15 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference("user-reservation")
-    @ToString.Exclude
+//    @JsonManagedReference("user-reservation")
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference("user-ratingReview")
-    @ToString.Exclude
+//   @JsonManagedReference("user-ratingReview")
     private List<RatingReview> ratingReviews;
 
 
-    public User(long userId, String userName, String email, String password, String phone, String userAddress) {
+    public User(Long userId, String userName, String email, String password, String phone, String userAddress) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
@@ -62,6 +60,7 @@ public class User {
         this.phone = phone;
         this.userAddress = userAddress;
     }
+
 
 }
 

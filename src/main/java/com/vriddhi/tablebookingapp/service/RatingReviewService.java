@@ -1,6 +1,7 @@
 package com.vriddhi.tablebookingapp.service;
 
 import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewResponseDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.repository.RatingReviewRepository;
@@ -25,27 +26,35 @@ public class RatingReviewService implements RatingReviewServiceInterface {
     @Autowired
     private RatingReviewRepository ratingReviewRepository;
 
+
     @Override
     @Transactional
-    public RatingReview saveRatingReview(RatingReviewDTO ratingReview) {
-        return ratingReviewRepository.save(mapDTOToEntity(ratingReview));
+    public RatingReviewResponseDTO saveRatingReview(RatingReviewDTO ratingReview) {
+        return mapToResponseDTO(ratingReviewRepository.save(mapDTOToEntity(ratingReview)));
     }
 
     @Override
-    public Optional<RatingReview> getRatingReviewById(Long ratingId) {
-        return ratingReviewRepository.findById(ratingId);
+    public Optional<RatingReviewResponseDTO> getRatingReviewById(Long ratingId) {
+        return ratingReviewRepository.findById(ratingId).map(this::mapToResponseDTO);
     }
 
     @Override
-    public List<RatingReview> getRatingsReviewsByRestaurantId(Long restaurantId) {
+    public List<RatingReviewResponseDTO> getRatingsReviewsByRestaurantId(Long restaurantId) {
         Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        return ratingReviewRepository.findByRestaurant(restaurant); // Modify this to filter by restaurantId
+        return ratingReviewRepository.findByRestaurant(restaurant)
+                .stream().map(this::mapToResponseDTO).toList(); // Modify this to filter by restaurantId
     }
 
     @Override
     @Transactional
     public void deleteRatingReview(Long ratingId) {
         ratingReviewRepository.deleteById(ratingId);
+    }
+
+    @Override
+    public List<RatingReviewResponseDTO> getAllRatingReviews() {
+
+        return ratingReviewRepository.findAll().stream().map(this::mapToResponseDTO).toList();
     }
 
     private RatingReview mapDTOToEntity(RatingReviewDTO ratingReviewDTO) {
@@ -57,5 +66,14 @@ public class RatingReviewService implements RatingReviewServiceInterface {
         return ratingReview1;
     }
 
+    private RatingReviewResponseDTO mapToResponseDTO(RatingReview ratingReview) {
+        RatingReviewResponseDTO ratingReviewResponseDTO = new RatingReviewResponseDTO();
+        ratingReviewResponseDTO.setRatingId(ratingReview.getRatingId());
+        ratingReviewResponseDTO.setRating(ratingReview.getRating());
+        ratingReviewResponseDTO.setReview(ratingReview.getReview());
+        ratingReviewResponseDTO.setRestaurantId(ratingReview.getRestaurant().getRestaurantId());
+        ratingReviewResponseDTO.setUserId(ratingReview.getUser().getUserId());
+        return ratingReviewResponseDTO;
+    }
 
 }

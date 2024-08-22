@@ -5,19 +5,22 @@ import com.vriddhi.tablebookingapp.repository.RestaurantRepository;
 import com.vriddhi.tablebookingapp.service.RestaurantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-class RestaurantServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class RestaurantServiceTest {
 
     @Mock
     private RestaurantRepository restaurantRepository;
@@ -25,46 +28,59 @@ class RestaurantServiceTest {
     @InjectMocks
     private RestaurantService restaurantService;
 
+    private Restaurant restaurant;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        restaurant = new Restaurant(1L, "Test Restaurant", "Test Location", 0, "Test Description", "Test City", null, null, null);
+    }
+
+    @Test
+    void testGetAllRestaurants() {
+        when(restaurantRepository.findAll()).thenReturn(Collections.singletonList(restaurant));
+        List<Restaurant> response = restaurantService.getAllRestaurants();
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        verify(restaurantRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetRestaurantById_RestaurantExists() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.of(restaurant));
+        Optional<Restaurant> response = restaurantService.getRestaurantById(restaurant.getRestaurantId());
+        assertTrue(response.isPresent());
+        assertEquals(restaurant.getRestaurantId(), response.get().getRestaurantId());
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
+    }
+
+    @Test
+    void testGetRestaurantById_RestaurantDoesNotExist() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Restaurant> response = restaurantService.getRestaurantById(restaurant.getRestaurantId());
+        assertFalse(response.isPresent());
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
     }
 
     @Test
     void testSaveRestaurant() {
-        Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantName("Test Restaurant");
-
         when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
-
-        Restaurant savedRestaurant = restaurantService.saveRestaurant(restaurant);
-
-        assertNotNull(savedRestaurant);
-        assertEquals("Test Restaurant", savedRestaurant.getRestaurantName());
+        Restaurant response = restaurantService.saveRestaurant(restaurant);
+        assertNotNull(response);
+        assertEquals(restaurant.getRestaurantId(), response.getRestaurantId());
         verify(restaurantRepository, times(1)).save(restaurant);
     }
 
     @Test
-    void testGetRestaurantById() {
-        Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantId(1L);
-        restaurant.setRestaurantName("Test Restaurant");
-
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
-
-        Optional<Restaurant> foundRestaurant = restaurantService.getRestaurantById(1L);
-
-        assertTrue(foundRestaurant.isPresent());
-        assertEquals("Test Restaurant", foundRestaurant.get().getRestaurantName());
-        verify(restaurantRepository, times(1)).findById(1L);
+    void testDeleteRestaurant_RestaurantExists() {
+        doNothing().when(restaurantRepository).deleteById(anyLong());
+        restaurantService.deleteRestaurant(restaurant.getRestaurantId());
+        verify(restaurantRepository, times(1)).deleteById(restaurant.getRestaurantId());
     }
 
     @Test
-    void testDeleteRestaurant() {
-        doNothing().when(restaurantRepository).deleteById(1L);
-
-        restaurantService.deleteRestaurant(1L);
-
-        verify(restaurantRepository, times(1)).deleteById(1L);
+    void testDeleteRestaurant_RestaurantDoesNotExist() {
+        doThrow(new IllegalArgumentException("Restaurant not found")).when(restaurantRepository).deleteById(anyLong());
+        assertThrows(IllegalArgumentException.class, () -> restaurantService.deleteRestaurant(restaurant.getRestaurantId()));
+        verify(restaurantRepository, times(1)).deleteById(restaurant.getRestaurantId());
     }
 }

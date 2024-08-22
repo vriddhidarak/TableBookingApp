@@ -29,20 +29,17 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference("user-reservation")
-    @ToString.Exclude
+//    @JsonBackReference("user-reservation")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "table_id", nullable = false)
-    @JsonBackReference("table-reservation")
-    @ToString.Exclude
+//    @JsonBackReference("table-reservation")
     private com.vriddhi.tablebookingapp.model.Table table;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @JsonBackReference("restaurant-reservation")
-    @ToString.Exclude
+//    @JsonBackReference("restaurant-reservation")
     private Restaurant restaurant;
 
     private LocalDateTime reservationDateTime;

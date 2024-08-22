@@ -1,5 +1,4 @@
 package com.vriddhi.tablebookingapp;
-
 import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
@@ -7,14 +6,16 @@ import com.vriddhi.tablebookingapp.repository.UserRepository;
 import com.vriddhi.tablebookingapp.service.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
+@ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
 
     @Mock
@@ -23,37 +24,39 @@ public class LoginServiceTest {
     @InjectMocks
     private LoginService loginService;
 
+    private User user;
+    private LoginRequestDTO validLoginRequest;
+    private LoginRequestDTO invalidEmailLoginRequest;
+    private LoginRequestDTO invalidPasswordLoginRequest;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        user = new User(1L, "John Doe", "john.doe@example.com", "password123", "1234567890", "123 Main St", null, null);
+        validLoginRequest = new LoginRequestDTO("john.doe@example.com", "password123");
+        invalidEmailLoginRequest = new LoginRequestDTO("invalid.email@example.com", "password123");
+        invalidPasswordLoginRequest = new LoginRequestDTO("john.doe@example.com", "wrongpassword");
     }
 
     @Test
-    void testLoginUser_Success() {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("test@example.com", "password123");
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
-
-
-        UserResponseDTO result = loginService.loginUser(loginRequestDTO);
-
-
-        assertNotNull(result);
-        assertEquals("John Doe", result.getUserName());
-        verify(userRepository, times(1)).findByEmail("test@example.com");
+    void testLoginUser_ValidCredentials() {
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        UserResponseDTO response = loginService.loginUser(validLoginRequest);
+        assertNotNull(response);
+        assertEquals(user.getUserId(), response.getUserId());
+        verify(userRepository, times(1)).findByEmail(validLoginRequest.getEmail());
     }
 
     @Test
-    void testLoginUser_Failure() {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("test@example.com", "wrongpassword");
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
+    void testLoginUser_InvalidEmail() {
+        when(userRepository.findByEmail(anyString())).thenReturn(null);
+        assertThrows(IllegalArgumentException.class, () -> loginService.loginUser(invalidEmailLoginRequest));
+        verify(userRepository, times(1)).findByEmail(invalidEmailLoginRequest.getEmail());
+    }
 
-
-        UserResponseDTO result = loginService.loginUser(loginRequestDTO);
-
-
-        assertNull(result);
-        verify(userRepository, times(1)).findByEmail("test@example.com");
+    @Test
+    void testLoginUser_InvalidPassword() {
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        assertThrows(IllegalArgumentException.class, () -> loginService.loginUser(invalidPasswordLoginRequest));
+        verify(userRepository, times(1)).findByEmail(invalidPasswordLoginRequest.getEmail());
     }
 }

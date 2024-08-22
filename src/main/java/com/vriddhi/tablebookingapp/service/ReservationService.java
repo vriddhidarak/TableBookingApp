@@ -3,6 +3,7 @@ package com.vriddhi.tablebookingapp.service;
 import com.vriddhi.tablebookingapp.dto.*;
 import com.vriddhi.tablebookingapp.exception.InvalidInputException;
 import com.vriddhi.tablebookingapp.exception.ReservationConflictException;
+import com.vriddhi.tablebookingapp.exception.ResourceNotFoundException;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
@@ -113,6 +114,9 @@ public class ReservationService implements ReservationServiceInterface {
         return responseDTO;
     }
     private UserResponseDTO mapToUserResponseDTO(User user) {
+        if(user==null){
+            throw new ResourceNotFoundException("User not found");
+        }
         UserResponseDTO responseDTO = new UserResponseDTO();
         responseDTO.setUserId(user.getUserId());
         responseDTO.setUserName(user.getUserName());
@@ -122,6 +126,9 @@ public class ReservationService implements ReservationServiceInterface {
         return responseDTO;
     }
     private TableResponseDTO mapToTableDTO(Table table) {
+        if(table==null){
+            throw new ResourceNotFoundException("Table not found");
+        }
         TableResponseDTO tableResponseDTO = new TableResponseDTO();
         tableResponseDTO.setTableId(table.getTableId());
         tableResponseDTO.setTableNumber(table.getTableNumber());

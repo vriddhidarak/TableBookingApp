@@ -1,6 +1,7 @@
 package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewResponseDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
 import com.vriddhi.tablebookingapp.model.Table;
 import com.vriddhi.tablebookingapp.service.RatingReviewServiceInterface;
@@ -24,13 +25,21 @@ public class RatingReviewController {
     @Autowired
     private RatingReviewServiceInterface ratingReviewService;
 
-    @PostMapping
+    @GetMapping
     @Operation(summary = "Get all Rating Review", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved Reviews",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public ResponseEntity<RatingReview> createRatingReview(@RequestBody RatingReviewDTO ratingReview) {
-        RatingReview newRatingReview = ratingReviewService.saveRatingReview(ratingReview);
+    public List<RatingReviewResponseDTO> getAllRatingReviews() {
+        return ratingReviewService.getAllRatingReviews();
+    }
+    @PostMapping
+    @Operation(summary = "create a rating review", responses = {
+            @ApiResponse(responseCode = "200", description = "Successfully created Reviews",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
+    })
+    public ResponseEntity<RatingReviewResponseDTO> createRatingReview(@RequestBody RatingReviewDTO ratingReview) {
+        RatingReviewResponseDTO newRatingReview = ratingReviewService.saveRatingReview(ratingReview);
         return ResponseEntity.ok(newRatingReview);
     }
 
@@ -39,8 +48,8 @@ public class RatingReviewController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved Rating",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public ResponseEntity<RatingReview> getRatingReview(@PathVariable Long ratingId) {
-        Optional<RatingReview> ratingReview = ratingReviewService.getRatingReviewById(ratingId);
+    public ResponseEntity<RatingReviewResponseDTO> getRatingReview(@PathVariable Long ratingId) {
+        Optional<RatingReviewResponseDTO> ratingReview = ratingReviewService.getRatingReviewById(ratingId);
         return ratingReview.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -49,7 +58,7 @@ public class RatingReviewController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved Rating",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public List<RatingReview> getRatingsReviewsByRestaurant(@PathVariable Long restaurantId) {
+    public List<RatingReviewResponseDTO> getRatingsReviewsByRestaurant(@PathVariable Long restaurantId) {
         return ratingReviewService.getRatingsReviewsByRestaurantId(restaurantId);
     }
 

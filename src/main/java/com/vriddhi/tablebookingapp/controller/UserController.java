@@ -3,6 +3,8 @@ package com.vriddhi.tablebookingapp.controller;
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
 import com.vriddhi.tablebookingapp.service.UserServiceInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.Set;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserServiceInterface userService;
 
@@ -28,6 +31,7 @@ public class UserController {
     })
     public ResponseEntity<Set<UserResponseDTO>> getUsers() {
         Set<UserResponseDTO> users = userService.getUsers();
+        log.info("Returning all users {}", users);
         return ResponseEntity.ok(users);
     }
 

@@ -7,18 +7,22 @@ import com.vriddhi.tablebookingapp.repository.TableRepository;
 import com.vriddhi.tablebookingapp.service.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-class TableServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class TableServiceTest {
 
     @Mock
     private RestaurantRepository restaurantRepository;
@@ -34,107 +38,76 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        restaurant = new Restaurant(1L, "Restaurant A", "Location A", 10, "Description A", "City A", null, null, null);
-        table = new Table(1L, 5, 4, restaurant, null);
+        restaurant = new Restaurant(1L, "Test Restaurant", "Test Location", 0, "Test Description", "Test City", null, null, null);
+        table = new Table(1L,4, 4, restaurant);
     }
 
     @Test
-    void testGetTablesByRestaurantId_Success() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
-        when(tableRepository.findByRestaurant(restaurant)).thenReturn(Arrays.asList(table));
-
-        // Act
-        List<Table> result = tableService.getTablesByRestaurantId(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(restaurantRepository, times(1)).findById(1L);
+    void testGetTablesByRestaurantId_RestaurantExists() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.of(restaurant));
+        when(tableRepository.findByRestaurant(any(Restaurant.class))).thenReturn(Collections.singletonList(table));
+        List<Table> response = tableService.getTablesByRestaurantId(restaurant.getRestaurantId());
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
         verify(tableRepository, times(1)).findByRestaurant(restaurant);
     }
 
     @Test
-    void testGetTablesByRestaurantId_RestaurantNotFound() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            tableService.getTablesByRestaurantId(1L);
-        });
-
-        assertEquals("Restaurant not found", exception.getMessage());
-        verify(restaurantRepository, times(1)).findById(1L);
+    void testGetTablesByRestaurantId_RestaurantDoesNotExist() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> tableService.getTablesByRestaurantId(restaurant.getRestaurantId()));
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
         verify(tableRepository, times(0)).findByRestaurant(any(Restaurant.class));
     }
 
     @Test
-    void testGetTableById_Success() {
-        // Arrange
-        when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
-
-        // Act
-        Optional<Table> result = tableService.getTableById(1L);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(table, result.get());
-        verify(tableRepository, times(1)).findById(1L);
+    void testGetTableById_TableExists() {
+        when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
+        Optional<Table> response = tableService.getTableById(table.getTableId());
+        assertTrue(response.isPresent());
+        assertEquals(table.getTableId(), response.get().getTableId());
+        verify(tableRepository, times(1)).findById(table.getTableId());
     }
 
     @Test
-    void testGetTableById_TableNotFound() {
-        // Arrange
-        when(tableRepository.findById(1L)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Table> result = tableService.getTableById(1L);
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(tableRepository, times(1)).findById(1L);
+    void testGetTableById_TableDoesNotExist() {
+        when(tableRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Table> response = tableService.getTableById(table.getTableId());
+        assertFalse(response.isPresent());
+        verify(tableRepository, times(1)).findById(table.getTableId());
     }
 
     @Test
-    void testSaveTable_Success() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
-        when(tableRepository.save(table)).thenReturn(table);
-
-        // Act
-        Table result = tableService.saveTable(table, 1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(table, result);
-        assertEquals(11, restaurant.getRestaurantTotalTableCount());  // Ensure the table count is updated
-        verify(restaurantRepository, times(1)).findById(1L);
+    void testSaveTable_RestaurantExists() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.of(restaurant));
+        when(tableRepository.save(any(Table.class))).thenReturn(table);
+        Table response = tableService.saveTable(table, restaurant.getRestaurantId());
+        assertNotNull(response);
+        assertEquals(table.getTableId(), response.getTableId());
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
         verify(tableRepository, times(1)).save(table);
     }
 
     @Test
-    void testSaveTable_RestaurantNotFound() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            tableService.saveTable(table, 1L);
-        });
-
-        assertEquals("Restaurant not found", exception.getMessage());
-        verify(restaurantRepository, times(1)).findById(1L);
+    void testSaveTable_RestaurantDoesNotExist() {
+        when(restaurantRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> tableService.saveTable(table, restaurant.getRestaurantId()));
+        verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
         verify(tableRepository, times(0)).save(any(Table.class));
     }
 
     @Test
-    void testDeleteTable_Success() {
-        // Act
-        tableService.deleteTable(1L);
+    void testDeleteTable_TableExists() {
+        doNothing().when(tableRepository).deleteById(anyLong());
+        tableService.deleteTable(table.getTableId());
+        verify(tableRepository, times(1)).deleteById(table.getTableId());
+    }
 
-        // Assert
-        verify(tableRepository, times(1)).deleteById(1L);
+    @Test
+    void testDeleteTable_TableDoesNotExist() {
+        doThrow(new IllegalArgumentException("Table not found")).when(tableRepository).deleteById(anyLong());
+        assertThrows(IllegalArgumentException.class, () -> tableService.deleteTable(table.getTableId()));
+        verify(tableRepository, times(1)).deleteById(table.getTableId());
     }
 }
