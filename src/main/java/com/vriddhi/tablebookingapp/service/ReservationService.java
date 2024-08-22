@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.vriddhi.tablebookingapp.dto.ReservationRequestDTO.mapToReservationEntity;
+import static com.vriddhi.tablebookingapp.dto.ReservationResponseDTO.mapToReservationResponseDTO;
+
 @Service
 public class ReservationService implements ReservationServiceInterface {
 
@@ -36,26 +39,26 @@ public class ReservationService implements ReservationServiceInterface {
 
 
     @Transactional
-    public ReservationResponseDTO saveReservation(ReservationDTO reservationDTO) {
-        Table table = tableRepository.findById(reservationDTO.getTableId())
+    public ReservationResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO) {
+        Table table = tableRepository.findById(reservationRequestDTO.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid table ID"));
 
-        validateReservation(reservationDTO, table);
+        validateReservation(reservationRequestDTO, table);
 
-        User user = userRepository.findById(reservationDTO.getUserId())
+        User user = userRepository.findById(reservationRequestDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        Restaurant restaurant = restaurantRepository.findById(reservationDTO.getRestaurantId())
+        Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid restaurant ID"));
 
-        Reservation newReservation = mapToReservationEntity(reservationDTO, user, table, restaurant);
+        Reservation newReservation = mapToReservationEntity(reservationRequestDTO, user, table, restaurant);
         Reservation savedReservation = reservationRepository.save(newReservation);
 
         return mapToReservationResponseDTO(savedReservation);
     }
 
     public Optional<ReservationResponseDTO> getReservationById(Long reservationId) {
-        return reservationRepository.findById(reservationId).map(this::mapToReservationResponseDTO);
+        return reservationRepository.findById(reservationId).map(ReservationResponseDTO::mapToReservationResponseDTO);
     }
 
     @Transactional
@@ -68,19 +71,19 @@ public class ReservationService implements ReservationServiceInterface {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
         return reservationRepository.findByUser(Optional.of(user))
                 .stream()
-                .map(this::mapToReservationResponseDTO)
+                .map(ReservationResponseDTO::mapToReservationResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ReservationResponseDTO> getAllReservations() {
         return reservationRepository.findAll()
                 .stream()
-                .map(this::mapToReservationResponseDTO)
+                .map(ReservationResponseDTO::mapToReservationResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    private void validateReservation(ReservationDTO reservationDTO, Table table) {
-        LocalDateTime reservationTime = reservationDTO.getReservationDateTime();
+    private void validateReservation(ReservationRequestDTO reservationRequestDTO, Table table) {
+        LocalDateTime reservationTime = reservationRequestDTO.getReservationDateTime();
         Optional<Reservation> existingReservation = reservationRepository
                 .findByTableAndReservationDateTime(table, reservationTime);
 
@@ -88,59 +91,14 @@ public class ReservationService implements ReservationServiceInterface {
             throw new ReservationConflictException("Reservation conflict: Table is already reserved at this time.");
         }
 
-        if (reservationDTO.getPartySize() > table.getTotalSeats()) {
+        if (reservationRequestDTO.getPartySize() > table.getTotalSeats()) {
             throw new InvalidInputException("Party size exceeds table capacity.");
         }
     }
 
-    private Reservation mapToReservationEntity(ReservationDTO reservationDTO, User user, Table table, Restaurant restaurant) {
-        Reservation reservation = new Reservation();
-        reservation.setReservationDateTime(reservationDTO.getReservationDateTime());
-        reservation.setPartySize(reservationDTO.getPartySize());
-        reservation.setUser(user);
-        reservation.setTable(table);
-        reservation.setRestaurant(restaurant);
-        return reservation;
-    }
 
-    private ReservationResponseDTO mapToReservationResponseDTO(Reservation reservation) {
-        ReservationResponseDTO responseDTO = new ReservationResponseDTO();
-        responseDTO.setReservationId(reservation.getReservationId());
-        responseDTO.setReservationDateTime(reservation.getReservationDateTime());
-        responseDTO.setPartySize(reservation.getPartySize());
-        responseDTO.setUser(mapToUserResponseDTO(reservation.getUser()));
-        responseDTO.setTable(mapToTableDTO(reservation.getTable()));
-        responseDTO.setRestaurant(mapToRestaurantDTO(reservation.getRestaurant()));
-        return responseDTO;
-    }
-    private UserResponseDTO mapToUserResponseDTO(User user) {
-        if(user==null){
-            throw new ResourceNotFoundException("User not found");
-        }
-        UserResponseDTO responseDTO = new UserResponseDTO();
-        responseDTO.setUserId(user.getUserId());
-        responseDTO.setUserName(user.getUserName());
-        responseDTO.setEmail(user.getEmail());
-        responseDTO.setPhone(user.getPhone());
-        responseDTO.setUserAddress(user.getUserAddress());
-        return responseDTO;
-    }
-    private TableResponseDTO mapToTableDTO(Table table) {
-        if(table==null){
-            throw new ResourceNotFoundException("Table not found");
-        }
-        TableResponseDTO tableResponseDTO = new TableResponseDTO();
-        tableResponseDTO.setTableId(table.getTableId());
-        tableResponseDTO.setTableNumber(table.getTableNumber());
-        tableResponseDTO.setTotalSeats(table.getTotalSeats());
-        return tableResponseDTO;
-    }
-    private RestaurantResponseDTO mapToRestaurantDTO(Restaurant restaurant) {
-        RestaurantResponseDTO restaurantResponseDTO = new RestaurantResponseDTO();
-        restaurantResponseDTO.setRestaurantId(restaurant.getRestaurantId());
-        restaurantResponseDTO.setRestaurantName(restaurant.getRestaurantName());
-        restaurantResponseDTO.setRestaurantLocation(restaurant.getRestaurantLocation());
-        restaurantResponseDTO.setRestaurantDescription(restaurant.getRestaurantDescription());
-        return restaurantResponseDTO;
-    }
+
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.vriddhi.tablebookingapp;
 
-import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewRequestDTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewResponseDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.User;
@@ -44,11 +45,11 @@ public class RatingReviewServiceTest {
 
     @Test
     void testSaveRatingReview_Success() {
-        RatingReviewDTO ratingReviewDTO = new RatingReviewDTO();
-        ratingReviewDTO.setRestaurantId(1L);
-        ratingReviewDTO.setUserId(1L);
-        ratingReviewDTO.setRating(5);
-        ratingReviewDTO.setReview("Great!");
+        RatingReviewRequestDTO ratingReviewRequestDTO = new RatingReviewRequestDTO();
+        ratingReviewRequestDTO.setRestaurantId(1L);
+        ratingReviewRequestDTO.setUserId(1L);
+        ratingReviewRequestDTO.setRating(5);
+        ratingReviewRequestDTO.setReview("Great!");
 
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantId(1L);
@@ -60,7 +61,7 @@ public class RatingReviewServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(ratingReviewRepository.save(any(RatingReview.class))).thenReturn(new RatingReview());
 
-        RatingReview savedRatingReview = ratingReviewService.saveRatingReview(ratingReviewDTO);
+        RatingReviewResponseDTO savedRatingReview = ratingReviewService.saveRatingReview(ratingReviewRequestDTO);
 
         assertNotNull(savedRatingReview);
         verify(ratingReviewRepository, times(1)).save(any(RatingReview.class));
@@ -68,19 +69,19 @@ public class RatingReviewServiceTest {
 
     @Test
     void testSaveRatingReview_InvalidRestaurantId() {
-        RatingReviewDTO ratingReviewDTO = new RatingReviewDTO();
-        ratingReviewDTO.setRestaurantId(1L);
+        RatingReviewRequestDTO ratingReviewRequestDTO = new RatingReviewRequestDTO();
+        ratingReviewRequestDTO.setRestaurantId(1L);
 
         when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> ratingReviewService.saveRatingReview(ratingReviewDTO));
+        assertThrows(NoSuchElementException.class, () -> ratingReviewService.saveRatingReview(ratingReviewRequestDTO));
     }
 
     @Test
     void testSaveRatingReview_InvalidUserId() {
-        RatingReviewDTO ratingReviewDTO = new RatingReviewDTO();
-        ratingReviewDTO.setRestaurantId(1L);
-        ratingReviewDTO.setUserId(1L);
+        RatingReviewRequestDTO ratingReviewRequestDTO = new RatingReviewRequestDTO();
+        ratingReviewRequestDTO.setRestaurantId(1L);
+        ratingReviewRequestDTO.setUserId(1L);
 
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantId(1L);
@@ -88,7 +89,7 @@ public class RatingReviewServiceTest {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> ratingReviewService.saveRatingReview(ratingReviewDTO));
+        assertThrows(NoSuchElementException.class, () -> ratingReviewService.saveRatingReview(ratingReviewRequestDTO));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class RatingReviewServiceTest {
 
         when(ratingReviewRepository.findById(1L)).thenReturn(Optional.of(ratingReview));
 
-        Optional<RatingReview> fetchedRatingReview = ratingReviewService.getRatingReviewById(1L);
+        Optional<RatingReviewResponseDTO> fetchedRatingReview = ratingReviewService.getRatingReviewById(1L);
 
         assertTrue(fetchedRatingReview.isPresent());
         assertEquals(1L, fetchedRatingReview.get().getRatingId());
@@ -108,7 +109,7 @@ public class RatingReviewServiceTest {
     void testGetRatingReviewById_NotFound() {
         when(ratingReviewRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<RatingReview> fetchedRatingReview = ratingReviewService.getRatingReviewById(1L);
+        Optional<RatingReviewResponseDTO> fetchedRatingReview = ratingReviewService.getRatingReviewById(1L);
 
         assertFalse(fetchedRatingReview.isPresent());
     }
@@ -137,7 +138,7 @@ public class RatingReviewServiceTest {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         when(ratingReviewRepository.findByRestaurant(Optional.of(restaurant))).thenReturn(Collections.singletonList(new RatingReview()));
 
-        List<RatingReview> ratingReviews = ratingReviewService.getRatingsReviewsByRestaurantId(1L);
+        List<RatingReviewResponseDTO> ratingReviews = ratingReviewService.getRatingsReviewsByRestaurantId(1L);
 
         assertFalse(ratingReviews.isEmpty());
     }
@@ -146,7 +147,7 @@ public class RatingReviewServiceTest {
     void testGetRatingsReviewsByRestaurantId_InvalidRestaurantId() {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
 
-        List<RatingReview> ratingReviews = ratingReviewService.getRatingsReviewsByRestaurantId(1L);
+        List<RatingReviewResponseDTO> ratingReviews = ratingReviewService.getRatingsReviewsByRestaurantId(1L);
 
         assertTrue(ratingReviews.isEmpty());
     }
@@ -155,7 +156,7 @@ public class RatingReviewServiceTest {
     void testGetAllRatingReviews() {
         when(ratingReviewRepository.findAll()).thenReturn(Collections.singletonList(new RatingReview()));
 
-        List<RatingReview> ratingReviews = ratingReviewService.getAllRatingReviews();
+        List<RatingReviewResponseDTO> ratingReviews = ratingReviewService.getAllRatingReviews();
 
         assertFalse(ratingReviews.isEmpty());
     }

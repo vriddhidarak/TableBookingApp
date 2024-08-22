@@ -1,8 +1,8 @@
 package com.vriddhi.tablebookingapp.service;
 
-import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
-import com.vriddhi.tablebookingapp.dto.ReservationDTO;
-import com.vriddhi.tablebookingapp.dto.RestaurantResponse1DTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewRequestDTO;
+import com.vriddhi.tablebookingapp.dto.ReservationRequestDTO;
+import com.vriddhi.tablebookingapp.dto.RestaurantResponseDTO;
 import com.vriddhi.tablebookingapp.dto.TableResponseDTO;
 import com.vriddhi.tablebookingapp.model.RatingReview;
 import com.vriddhi.tablebookingapp.model.Reservation;
@@ -25,19 +25,19 @@ public class RestaurantService implements RestaurantServiceInterface {
 
 
     @Override
-    public List<RestaurantResponse1DTO> getAllRestaurants() {
+    public List<RestaurantResponseDTO> getAllRestaurants() {
 
         return restaurantRepository.findAll().stream().map(this::mapToRestaurantResponseDTO).toList();
     }
 
     @Override
-    public Optional<RestaurantResponse1DTO> getRestaurantById(Long restaurantId) {
+    public Optional<RestaurantResponseDTO> getRestaurantById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId).map(this::mapToRestaurantResponseDTO);
     }
 
     @Override
     @Transactional
-    public RestaurantResponse1DTO saveRestaurant(Restaurant restaurant) {
+    public RestaurantResponseDTO saveRestaurant(Restaurant restaurant) {
         restaurant.setRestaurantTotalTableCount(0);
         return mapToRestaurantResponseDTO(restaurantRepository.save(restaurant));
     }
@@ -48,29 +48,29 @@ public class RestaurantService implements RestaurantServiceInterface {
         restaurantRepository.deleteById(restaurantId);
     }
 
-    private RestaurantResponse1DTO mapToRestaurantResponseDTO(Restaurant restaurant) {
-        RestaurantResponse1DTO restaurantResponse1DTO = new RestaurantResponse1DTO();
-        restaurantResponse1DTO.setRestaurantId(restaurant.getRestaurantId());
-        restaurantResponse1DTO.setRestaurantName(restaurant.getRestaurantName());
-        restaurantResponse1DTO.setRestaurantLocation(restaurant.getRestaurantLocation());
-        restaurantResponse1DTO.setRestaurantDescription(restaurant.getRestaurantDescription());
-        restaurantResponse1DTO.setRestaurantTotalTableCount(restaurant.getRestaurantTotalTableCount());
+    private RestaurantResponseDTO mapToRestaurantResponseDTO(Restaurant restaurant) {
+        RestaurantResponseDTO restaurantResponseDTO = new RestaurantResponseDTO();
+        restaurantResponseDTO.setRestaurantId(restaurant.getRestaurantId());
+        restaurantResponseDTO.setRestaurantName(restaurant.getRestaurantName());
+        restaurantResponseDTO.setRestaurantLocation(restaurant.getRestaurantLocation());
+        restaurantResponseDTO.setRestaurantDescription(restaurant.getRestaurantDescription());
+        restaurantResponseDTO.setRestaurantTotalTableCount(restaurant.getRestaurantTotalTableCount());
         List<TableResponseDTO> tables = new ArrayList<>();
         for (Table table : restaurant.getTables()) {
             tables.add(maptoTableResponseDTO(table));
         }
-        restaurantResponse1DTO.setTables(tables);
-        List<ReservationDTO> reservations = new ArrayList<>();
+        restaurantResponseDTO.setTables(tables);
+        List<ReservationRequestDTO> reservations = new ArrayList<>();
         for(Reservation reservation: restaurant.getReservations()){
             reservations.add(maptoReservationDTO(reservation));
         }
-        restaurantResponse1DTO.setReservations(reservations);
-        List<RatingReviewDTO> ratingReviewDTOS = new ArrayList<>();
+        restaurantResponseDTO.setReservations(reservations);
+        List<RatingReviewRequestDTO> ratingReviewRequestDTOS = new ArrayList<>();
         for(RatingReview ratingReview: restaurant.getRatingReviews()){
-            ratingReviewDTOS.add(maptoRatingReviewDTO(ratingReview));
+            ratingReviewRequestDTOS.add(maptoRatingReviewDTO(ratingReview));
         }
-        restaurantResponse1DTO.setRatingReviews(ratingReviewDTOS);
-        return restaurantResponse1DTO;
+        restaurantResponseDTO.setRatingReviews(ratingReviewRequestDTOS);
+        return restaurantResponseDTO;
     }
 
     private TableResponseDTO maptoTableResponseDTO(Table table){
@@ -81,21 +81,21 @@ public class RestaurantService implements RestaurantServiceInterface {
         return tableResponseDTO;
     }
 
-    private ReservationDTO maptoReservationDTO(Reservation reservation){
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setUserId(reservation.getUser().getUserId());
-        reservationDTO.setTableId(reservation.getTable().getTableId());
-        reservationDTO.setRestaurantId(reservation.getRestaurant().getRestaurantId());
-        reservationDTO.setReservationDateTime(reservation.getReservationDateTime());
-        reservationDTO.setPartySize(reservation.getPartySize());
-        return reservationDTO;
+    private ReservationRequestDTO maptoReservationDTO(Reservation reservation){
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setUserId(reservation.getUser().getUserId());
+        reservationRequestDTO.setTableId(reservation.getTable().getTableId());
+        reservationRequestDTO.setRestaurantId(reservation.getRestaurant().getRestaurantId());
+        reservationRequestDTO.setReservationDateTime(reservation.getReservationDateTime());
+        reservationRequestDTO.setPartySize(reservation.getPartySize());
+        return reservationRequestDTO;
     }
 
-    private RatingReviewDTO maptoRatingReviewDTO(RatingReview ratingReview){
-        RatingReviewDTO ratingReviewDTO = new RatingReviewDTO();
-        ratingReviewDTO.setRestaurantId(ratingReview.getRestaurant().getRestaurantId());
-        ratingReviewDTO.setRating(ratingReview.getRating());
-        ratingReviewDTO.setReview(ratingReview.getReview());
-        return ratingReviewDTO;
+    private RatingReviewRequestDTO maptoRatingReviewDTO(RatingReview ratingReview){
+        RatingReviewRequestDTO ratingReviewRequestDTO = new RatingReviewRequestDTO();
+        ratingReviewRequestDTO.setRestaurantId(ratingReview.getRestaurant().getRestaurantId());
+        ratingReviewRequestDTO.setRating(ratingReview.getRating());
+        ratingReviewRequestDTO.setReview(ratingReview.getReview());
+        return ratingReviewRequestDTO;
     }
 }

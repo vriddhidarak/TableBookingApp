@@ -1,5 +1,6 @@
 package com.vriddhi.tablebookingapp;
 
+import com.vriddhi.tablebookingapp.dto.TableResponseDTO;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
 import com.vriddhi.tablebookingapp.repository.RestaurantRepository;
@@ -46,7 +47,7 @@ public class TableServiceTest {
     void testGetTablesByRestaurantId_RestaurantExists() {
         when(restaurantRepository.findById(anyLong())).thenReturn(Optional.of(restaurant));
         when(tableRepository.findByRestaurant(any(Restaurant.class))).thenReturn(Collections.singletonList(table));
-        List<Table> response = tableService.getTablesByRestaurantId(restaurant.getRestaurantId());
+        List<TableResponseDTO> response = tableService.getTablesByRestaurantId(restaurant.getRestaurantId());
         assertNotNull(response);
         assertEquals(1, response.size());
         verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());
@@ -64,7 +65,7 @@ public class TableServiceTest {
     @Test
     void testGetTableById_TableExists() {
         when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
-        Optional<Table> response = tableService.getTableById(table.getTableId());
+        Optional<TableResponseDTO> response = tableService.getTableById(table.getTableId());
         assertTrue(response.isPresent());
         assertEquals(table.getTableId(), response.get().getTableId());
         verify(tableRepository, times(1)).findById(table.getTableId());
@@ -73,7 +74,7 @@ public class TableServiceTest {
     @Test
     void testGetTableById_TableDoesNotExist() {
         when(tableRepository.findById(anyLong())).thenReturn(Optional.empty());
-        Optional<Table> response = tableService.getTableById(table.getTableId());
+        Optional<TableResponseDTO> response = tableService.getTableById(table.getTableId());
         assertFalse(response.isPresent());
         verify(tableRepository, times(1)).findById(table.getTableId());
     }
@@ -82,7 +83,7 @@ public class TableServiceTest {
     void testSaveTable_RestaurantExists() {
         when(restaurantRepository.findById(anyLong())).thenReturn(Optional.of(restaurant));
         when(tableRepository.save(any(Table.class))).thenReturn(table);
-        Table response = tableService.saveTable(table, restaurant.getRestaurantId());
+        TableResponseDTO response = tableService.saveTable(table, restaurant.getRestaurantId());
         assertNotNull(response);
         assertEquals(table.getTableId(), response.getTableId());
         verify(restaurantRepository, times(1)).findById(restaurant.getRestaurantId());

@@ -1,6 +1,5 @@
 package com.vriddhi.tablebookingapp.controller;
 
-import com.vriddhi.tablebookingapp.dto.RestaurantResponse1DTO;
 import com.vriddhi.tablebookingapp.dto.RestaurantResponseDTO;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
@@ -28,7 +27,7 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved restaurants",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public List<RestaurantResponse1DTO> getAllRestaurants() {
+    public List<RestaurantResponseDTO> getAllRestaurants() {
         return restaurantService.getAllRestaurants();
     }
 
@@ -37,8 +36,8 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public ResponseEntity<RestaurantResponse1DTO> getRestaurant(@PathVariable Long restaurantId) {
-        Optional<RestaurantResponse1DTO> restaurant = restaurantService.getRestaurantById(restaurantId);
+    public ResponseEntity<RestaurantResponseDTO> getRestaurant(@PathVariable Long restaurantId) {
+        Optional<RestaurantResponseDTO> restaurant = restaurantService.getRestaurantById(restaurantId);
         return restaurant.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -47,8 +46,8 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully created restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public ResponseEntity<RestaurantResponse1DTO> createRestaurant(@RequestBody Restaurant restaurant) {
-        RestaurantResponse1DTO newRestaurant = restaurantService.saveRestaurant(restaurant);
+    public ResponseEntity<RestaurantResponseDTO> createRestaurant(@RequestBody Restaurant restaurant) {
+        RestaurantResponseDTO newRestaurant = restaurantService.saveRestaurant(restaurant);
         return ResponseEntity.ok(newRestaurant);
     }
 
@@ -57,9 +56,9 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully updated restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public ResponseEntity<RestaurantResponse1DTO> updateRestaurant(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
+    public ResponseEntity<RestaurantResponseDTO> updateRestaurant(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
         restaurant.setRestaurantId(restaurantId);
-        RestaurantResponse1DTO updatedRestaurant = restaurantService.saveRestaurant(restaurant);
+        RestaurantResponseDTO updatedRestaurant = restaurantService.saveRestaurant(restaurant);
         return ResponseEntity.ok(updatedRestaurant);
     }
 

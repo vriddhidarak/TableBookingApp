@@ -1,8 +1,7 @@
 package com.vriddhi.tablebookingapp.controller;
 
-import com.vriddhi.tablebookingapp.dto.RatingReviewDTO;
+import com.vriddhi.tablebookingapp.dto.RatingReviewRequestDTO;
 import com.vriddhi.tablebookingapp.dto.RatingReviewResponseDTO;
-import com.vriddhi.tablebookingapp.model.RatingReview;
 import com.vriddhi.tablebookingapp.model.Table;
 import com.vriddhi.tablebookingapp.service.RatingReviewServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +37,7 @@ public class RatingReviewController {
             @ApiResponse(responseCode = "200", description = "Successfully created Reviews",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public ResponseEntity<RatingReviewResponseDTO> createRatingReview(@RequestBody RatingReviewDTO ratingReview) {
+    public ResponseEntity<RatingReviewResponseDTO> createRatingReview(@RequestBody RatingReviewRequestDTO ratingReview) {
         RatingReviewResponseDTO newRatingReview = ratingReviewService.saveRatingReview(ratingReview);
         return ResponseEntity.ok(newRatingReview);
     }

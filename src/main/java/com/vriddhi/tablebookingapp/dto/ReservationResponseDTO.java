@@ -1,13 +1,15 @@
 package com.vriddhi.tablebookingapp.dto;
 
-import com.vriddhi.tablebookingapp.model.Restaurant;
-import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.model.User;
+import com.vriddhi.tablebookingapp.model.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+import static com.vriddhi.tablebookingapp.dto.ReservationRestaurantResponseDTO.mapToRestaurantDTO;
+import static com.vriddhi.tablebookingapp.dto.TableResponseDTO.mapToTableDTO;
+import static com.vriddhi.tablebookingapp.dto.UserResponseDTO.mapToUserResponseDTO;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +20,17 @@ public class ReservationResponseDTO {
     private int partySize;
     private UserResponseDTO user;
     private TableResponseDTO table;
-    private RestaurantResponseDTO restaurant;
+    private ReservationRestaurantResponseDTO restaurant;
+
+    public static ReservationResponseDTO mapToReservationResponseDTO(Reservation reservation) {
+        ReservationResponseDTO responseDTO = new ReservationResponseDTO();
+        responseDTO.setReservationId(reservation.getReservationId());
+        responseDTO.setReservationDateTime(reservation.getReservationDateTime());
+        responseDTO.setPartySize(reservation.getPartySize());
+        responseDTO.setUser(mapToUserResponseDTO(reservation.getUser()));
+        responseDTO.setTable(mapToTableDTO(reservation.getTable()));
+        responseDTO.setRestaurant(mapToRestaurantDTO(reservation.getRestaurant()));
+        return responseDTO;
+    }
 }
+

@@ -1,6 +1,6 @@
 package com.vriddhi.tablebookingapp.controller;
 
-import com.vriddhi.tablebookingapp.dto.ReservationDTO;
+import com.vriddhi.tablebookingapp.dto.ReservationRequestDTO;
 import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Table;
@@ -39,7 +39,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "200", description = "Successfully created Reservation",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reservation.class))})
     })
-    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationDTO reservation) {
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO reservation) {
         ReservationResponseDTO newReservation = reservationService.saveReservation(reservation);
         return ResponseEntity.ok(newReservation);
     }

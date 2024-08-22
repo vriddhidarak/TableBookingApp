@@ -1,8 +1,6 @@
 package com.vriddhi.tablebookingapp.service;
 
-import com.vriddhi.tablebookingapp.dto.ReservationDTO;
 import com.vriddhi.tablebookingapp.dto.TableResponseDTO;
-import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
 import com.vriddhi.tablebookingapp.repository.RestaurantRepository;
@@ -56,15 +54,6 @@ public class TableService implements TableServiceInterface {
         tableResponseDTO.setTableId(table.getTableId());
         tableResponseDTO.setTableNumber(table.getTableNumber());
         tableResponseDTO.setTotalSeats(table.getTotalSeats());
-        for(Reservation reservation : table.getReservations()) {
-            tableResponseDTO.setReservation(
-                    new ReservationDTO(reservation.getUser().getUserId(),
-                            reservation.getTable().getTableId(),
-                            reservation.getRestaurant().getRestaurantId(),
-                            reservation.getReservationDateTime(),
-                            reservation.getPartySize()));
-        }
-
         return tableResponseDTO;
     }
 }

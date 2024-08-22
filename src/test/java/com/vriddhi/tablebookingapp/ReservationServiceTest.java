@@ -53,12 +53,12 @@ public class ReservationServiceTest {
 
     @Test
     void testSaveReservation_Success() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
-        reservationDTO.setUserId(1L);
-        reservationDTO.setRestaurantId(1L);
-        reservationDTO.setReservationDateTime(LocalDateTime.now().plusDays(1));
-        reservationDTO.setPartySize(4);
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
+        reservationRequestDTO.setUserId(1L);
+        reservationRequestDTO.setRestaurantId(1L);
+        reservationRequestDTO.setReservationDateTime(LocalDateTime.now().plusDays(1));
+        reservationRequestDTO.setPartySize(4);
 
         Table table = new Table();
         table.setTableId(1L);
@@ -75,7 +75,7 @@ public class ReservationServiceTest {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(new Reservation());
 
-        ReservationResponseDTO responseDTO = reservationService.saveReservation(reservationDTO);
+        ReservationResponseDTO responseDTO = reservationService.saveReservation(reservationRequestDTO);
 
         assertNotNull(responseDTO);
         verify(reservationRepository, times(1)).save(any(Reservation.class));
@@ -83,45 +83,45 @@ public class ReservationServiceTest {
 
     @Test
     void testSaveReservation_InvalidTableId() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
 
         when(tableRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationDTO));
+        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationRequestDTO));
     }
 
     @Test
     void testSaveReservation_InvalidUserId() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
-        reservationDTO.setUserId(1L);
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
+        reservationRequestDTO.setUserId(1L);
 
         when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationDTO));
+        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationRequestDTO));
     }
 
     @Test
     void testSaveReservation_InvalidRestaurantId() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
-        reservationDTO.setUserId(1L);
-        reservationDTO.setRestaurantId(1L);
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
+        reservationRequestDTO.setUserId(1L);
+        reservationRequestDTO.setRestaurantId(1L);
 
         when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationDTO));
+        assertThrows(IllegalArgumentException.class, () -> reservationService.saveReservation(reservationRequestDTO));
     }
 
     @Test
     void testSaveReservation_ReservationConflict() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
-        reservationDTO.setReservationDateTime(LocalDateTime.now().plusDays(1));
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
+        reservationRequestDTO.setReservationDateTime(LocalDateTime.now().plusDays(1));
 
         Table table = new Table();
         table.setTableId(1L);
@@ -130,20 +130,20 @@ public class ReservationServiceTest {
         when(reservationRepository.findByTableAndReservationDateTime(any(Table.class), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(new Reservation()));
 
-        assertThrows(ReservationConflictException.class, () -> reservationService.saveReservation(reservationDTO));
+        assertThrows(ReservationConflictException.class, () -> reservationService.saveReservation(reservationRequestDTO));
     }
 
     @Test
     void testSaveReservation_PartySizeExceedsCapacity() {
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setTableId(1L);
-        reservationDTO.setPartySize(5);
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setTableId(1L);
+        reservationRequestDTO.setPartySize(5);
 
         table.setTotalSeats(4);
 
         when(tableRepository.findById(1L)).thenReturn(Optional.of(table));
 
-        assertThrows(InvalidInputException.class, () -> reservationService.saveReservation(reservationDTO));
+        assertThrows(InvalidInputException.class, () -> reservationService.saveReservation(reservationRequestDTO));
     }
 
     @Test
