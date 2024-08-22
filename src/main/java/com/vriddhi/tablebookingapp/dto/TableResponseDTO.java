@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +14,7 @@ public class TableResponseDTO {
     private int tableNumber;
     private int totalSeats;
 
-    public static TableResponseDTO mapToTableDTO(Table table) {
+    public static TableResponseDTO mapToTableResponseDTO(Table table) {
         if(table==null){
             throw new ResourceNotFoundException("Table not found");
         }

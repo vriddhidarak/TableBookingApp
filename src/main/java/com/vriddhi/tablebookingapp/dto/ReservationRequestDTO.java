@@ -30,4 +30,14 @@ public class ReservationRequestDTO {
         reservation.setRestaurant(restaurant);
         return reservation;
     }
+
+    public static ReservationRequestDTO maptoReservationDTO(Reservation reservation){
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
+        reservationRequestDTO.setUserId(reservation.getUser().getUserId());
+        reservationRequestDTO.setTableId(reservation.getTable().getTableId());
+        reservationRequestDTO.setRestaurantId(reservation.getRestaurant().getRestaurantId());
+        reservationRequestDTO.setReservationDateTime(reservation.getReservationDateTime());
+        reservationRequestDTO.setPartySize(reservation.getPartySize());
+        return reservationRequestDTO;
+    }
 }

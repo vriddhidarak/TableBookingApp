@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,6 +30,9 @@ public class LoginServiceTest {
     private LoginRequestDTO invalidEmailLoginRequest;
     private LoginRequestDTO invalidPasswordLoginRequest;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp() {
         user = new User(1L, "John Doe", "john.doe@example.com", "password123", "1234567890", "123 Main St", null, null);
@@ -40,6 +44,7 @@ public class LoginServiceTest {
     @Test
     void testLoginUser_ValidCredentials() {
         when(userRepository.findByEmail(anyString())).thenReturn(user);
+
         UserResponseDTO response = loginService.loginUser(validLoginRequest);
         assertNotNull(response);
         assertEquals(user.getUserId(), response.getUserId());

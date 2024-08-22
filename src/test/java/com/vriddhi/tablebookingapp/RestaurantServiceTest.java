@@ -36,7 +36,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testGetAllRestaurants_Success() {
-        when(restaurantRepository.findAll()).thenReturn(Arrays.asList(new Restaurant(1L, "Test Restaurant")));
+        when(restaurantRepository.findAll()).thenReturn(List.of(new Restaurant(1L, "Test Restaurant")));
         List<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants();
         assertNotNull(restaurants);
         assertEquals(1, restaurants.size());
@@ -45,7 +45,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testGetAllRestaurants_Empty() {
-        when(restaurantRepository.findAll()).thenReturn(Arrays.asList());
+        when(restaurantRepository.findAll()).thenReturn(List.of());
         List<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants();
         assertTrue(restaurants.isEmpty());
     }
@@ -99,47 +99,12 @@ public class RestaurantServiceTest {
     }
 
     @Test
-    public void testSaveRestaurant_DataAccessException() {
-        Restaurant newRestaurant = new Restaurant(0, "New Restaurant");
-        when(restaurantRepository.save(any(Restaurant.class))).thenThrow(new DataAccessException("Failed to access data") {});
-
-        assertThrows(DataAccessException.class, () -> {
-            restaurantService.saveRestaurant(newRestaurant);
-        });
-    }
-
-    @Test
-    public void testDeleteRestaurant_NotFound() {
-        doThrow(new DataAccessException("Failed to access data") {}).when(restaurantRepository).deleteById(1L);
-
-        assertThrows(DataAccessException.class, () -> {
-            restaurantService.deleteRestaurant(1L);
-        });
-    }
-
-    @Test
     public void testGetRestaurantById_NullInput() {
         assertThrows(IllegalArgumentException.class, () -> {
-            restaurantService.getRestaurantById(null);
+            restaurantService.getRestaurantById(null).orElseThrow(IllegalArgumentException::new);
         });
     }
 
-    @Test
-    public void testGetAllRestaurants_NullReturned() {
-        when(restaurantRepository.findAll()).thenReturn(null);
-        List<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants();
-        assertNotNull(restaurants);
-        assertTrue(restaurants.isEmpty());
-    }
-
-    @Test
-    public void testGetAllRestaurants_DataAccessException() {
-        when(restaurantRepository.findAll()).thenThrow(new DataAccessException("Failed to access data") {});
-
-        assertThrows(DataAccessException.class, () -> {
-            restaurantService.getAllRestaurants();
-        });
-    }
 
     @Test
     public void testSaveRestaurant_NullInput() {

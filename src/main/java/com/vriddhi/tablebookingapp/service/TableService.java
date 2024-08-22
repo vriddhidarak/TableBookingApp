@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.vriddhi.tablebookingapp.dto.TableResponseDTO.mapToTableResponseDTO;
+
 @Service
 public class TableService implements TableServiceInterface {
 
@@ -24,13 +26,13 @@ public class TableService implements TableServiceInterface {
     public List<TableResponseDTO> getTablesByRestaurantId(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-        return tableRepository.findByRestaurant(restaurant).stream().map(this::mapToTableResponseDTO).toList();
+        return tableRepository.findByRestaurant(restaurant).stream().map(TableResponseDTO::mapToTableResponseDTO).toList();
     }
 
     @Override
     public Optional<TableResponseDTO> getTableById(Long tableId) {
 
-        return tableRepository.findById(tableId).map(this::mapToTableResponseDTO);
+        return tableRepository.findById(tableId).map(TableResponseDTO::mapToTableResponseDTO);
     }
 
     @Override
@@ -49,11 +51,5 @@ public class TableService implements TableServiceInterface {
         tableRepository.deleteById(tableId);
     }
 
-    private TableResponseDTO mapToTableResponseDTO(Table table) {
-        TableResponseDTO tableResponseDTO = new TableResponseDTO();
-        tableResponseDTO.setTableId(table.getTableId());
-        tableResponseDTO.setTableNumber(table.getTableNumber());
-        tableResponseDTO.setTotalSeats(table.getTotalSeats());
-        return tableResponseDTO;
-    }
+
 }

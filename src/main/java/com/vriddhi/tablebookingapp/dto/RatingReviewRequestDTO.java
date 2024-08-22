@@ -24,4 +24,12 @@ public class RatingReviewRequestDTO {
         ratingReview1.setUser(userRepository.findById(ratingReviewRequestDTO.getUserId()).get());
         return ratingReview1;
     }
+
+    public static RatingReviewRequestDTO maptoRatingReviewDTO(RatingReview ratingReview){
+        RatingReviewRequestDTO ratingReviewRequestDTO = new RatingReviewRequestDTO();
+        ratingReviewRequestDTO.setRestaurantId(ratingReview.getRestaurant().getRestaurantId());
+        ratingReviewRequestDTO.setRating(ratingReview.getRating());
+        ratingReviewRequestDTO.setReview(ratingReview.getReview());
+        return ratingReviewRequestDTO;
+    }
 }

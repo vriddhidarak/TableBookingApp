@@ -1,7 +1,9 @@
 package com.vriddhi.tablebookingapp.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,6 +15,7 @@ public class Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long restaurantId;
 
     private String restaurantName;
@@ -36,6 +39,9 @@ public class Restaurant {
     public Restaurant(long l, String testRestaurant) {
         this.restaurantId = l;
         this.restaurantName = testRestaurant;
+        this.tables = new ArrayList<>();
+        this.reservations = new ArrayList<>();
+        this.ratingReviews = new ArrayList<>();
 
     }
 }

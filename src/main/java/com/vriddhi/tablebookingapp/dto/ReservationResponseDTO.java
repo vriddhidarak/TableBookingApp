@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 import static com.vriddhi.tablebookingapp.dto.ReservationRestaurantResponseDTO.mapToRestaurantDTO;
-import static com.vriddhi.tablebookingapp.dto.TableResponseDTO.mapToTableDTO;
+import static com.vriddhi.tablebookingapp.dto.TableResponseDTO.mapToTableResponseDTO;
 import static com.vriddhi.tablebookingapp.dto.UserResponseDTO.mapToUserResponseDTO;
 
 @Data
@@ -28,7 +28,7 @@ public class ReservationResponseDTO {
         responseDTO.setReservationDateTime(reservation.getReservationDateTime());
         responseDTO.setPartySize(reservation.getPartySize());
         responseDTO.setUser(mapToUserResponseDTO(reservation.getUser()));
-        responseDTO.setTable(mapToTableDTO(reservation.getTable()));
+        responseDTO.setTable(mapToTableResponseDTO(reservation.getTable()));
         responseDTO.setRestaurant(mapToRestaurantDTO(reservation.getRestaurant()));
         return responseDTO;
     }

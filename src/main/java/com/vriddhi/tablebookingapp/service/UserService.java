@@ -17,6 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.vriddhi.tablebookingapp.dto.UserResponseDTO.mapToUserResponseDTO;
+
 @Slf4j
 @Service
 public class UserService implements UserServiceInterface{
@@ -41,7 +43,7 @@ public class UserService implements UserServiceInterface{
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
         }
-        return userRepository.findById(userId).map(this::mapToUserResponseDTO);
+        return userRepository.findById(userId).map(UserResponseDTO::mapToUserResponseDTO);
     }
 
 
@@ -63,13 +65,10 @@ public class UserService implements UserServiceInterface{
         }
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToUserResponseDTO)
+                .map(UserResponseDTO::mapToUserResponseDTO)
                 .collect(Collectors.toSet());
     }
 
-    private UserResponseDTO mapToUserResponseDTO(User user) {
-        return new UserResponseDTO(user.getUserId(), user.getUserName(), user.getEmail(), user.getPhone(), user.getUserAddress());
-    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
