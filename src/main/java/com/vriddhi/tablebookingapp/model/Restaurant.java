@@ -27,15 +27,12 @@ public class Restaurant {
     private String restaurantCity;
 
     @OneToMany(mappedBy = "restaurant")
-//    @JsonManagedReference("restaurant-table")
     private List<Table> tables;
 
     @OneToMany(mappedBy = "restaurant")
-//    @JsonManagedReference("restaurant-reservation")
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "restaurant")
-//    @JsonManagedReference("restaurant-ratingReview")
     private List<RatingReview> ratingReviews;
 
 

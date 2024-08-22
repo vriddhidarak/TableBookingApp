@@ -44,11 +44,9 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
-//    @JsonManagedReference("user-reservation")
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user")
-//   @JsonManagedReference("user-ratingReview")
     private List<RatingReview> ratingReviews;
 
 

@@ -28,12 +28,10 @@ public class RatingReview {
     @NonNull
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-//    @JsonBackReference("restaurant-ratingReview")
     private Restaurant restaurant;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-//    @JsonBackReference("user-ratingReview")
     private User user;
 
     private int rating;

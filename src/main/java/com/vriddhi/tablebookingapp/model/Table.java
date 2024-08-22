@@ -30,11 +30,9 @@ public class Table {
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-//    @JsonBackReference("restaurant-table")
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "table")
-//    @JsonManagedReference("table-reservation")
     private List<Reservation> reservations;
 
     public Table(long l, int s, int i, Restaurant restaurant) {
