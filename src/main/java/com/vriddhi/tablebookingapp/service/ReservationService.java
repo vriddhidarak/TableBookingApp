@@ -32,11 +32,12 @@ public class ReservationService implements ReservationServiceInterface {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private TableRepository tableRepository;
+
     @Autowired
     private RestaurantRepository restaurantRepository;
-
 
     @Transactional
     public ReservationResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO) {

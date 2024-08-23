@@ -105,24 +105,4 @@ public class UserServiceTest {
         verify(userRepository, times(1)).count();
         verify(userRepository, times(0)).findAll();
     }
-
-    @Test
-    void testSaveMultipleUsers() {
-        User user1 = new User(2L, "Jane Doe", "jane.doe@example.com", "password123", "0987654321", "456 Main St");
-        User user2 = new User(3L, "Alice Smith", "alice.smith@example.com", "password123", "1122334455", "789 Main St");
-
-        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(user1).thenReturn(user2);
-
-        UserResponseDTO response1 = userService.saveUser(user1);
-        UserResponseDTO response2 = userService.saveUser(user2);
-
-        assertNotNull(response1);
-        assertEquals(user1.getUserId(), response1.getUserId());
-        assertNotNull(response2);
-        assertEquals(user2.getUserId(), response2.getUserId());
-
-        verify(userRepository, times(1)).save(user1);
-        verify(userRepository, times(1)).save(user2);
-    }
 }

@@ -48,6 +48,11 @@ public class TableService implements TableServiceInterface {
     @Override
     @Transactional
     public void deleteTable(Long tableId) {
+        //decrease the restaurant total table count
+        Table table = tableRepository.findById(tableId)
+                .orElseThrow(() -> new RuntimeException("Table not found"));
+        Restaurant restaurant = table.getRestaurant();
+        restaurant.setRestaurantTotalTableCount(restaurant.getRestaurantTotalTableCount() - 1);
         tableRepository.deleteById(tableId);
     }
 
