@@ -1,17 +1,15 @@
 package com.vriddhi.tablebookingapp.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
 import java.util.List;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
 
 @Entity
 @jakarta.persistence.Table(name = "users")
@@ -28,8 +26,7 @@ public class User {
     @NotNull
     private String userName;
 
-    @Email(regexp = "^[A-Za-z0-9._%+-]+@[a-z]\\.com$", message = "email should be a valid mail")
-    @NotNull
+    @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "email should be a valid mail")    @NotNull
     @Column(unique = true)
     private String email;
 
@@ -46,18 +43,13 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference("user-reservation")
-    @ToString.Exclude
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference("user-ratingReview")
-    @ToString.Exclude
     private List<RatingReview> ratingReviews;
 
 
-    // New constructor
-    public User(long userId, String userName, String email, String password, String phone, String userAddress) {
+    public User(Long userId, String userName, String email, String password, String phone, String userAddress) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
@@ -65,6 +57,7 @@ public class User {
         this.phone = phone;
         this.userAddress = userAddress;
     }
+
 
 }
 

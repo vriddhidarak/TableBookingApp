@@ -2,7 +2,9 @@ package com.vriddhi.tablebookingapp.controller;
 
 import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
-import com.vriddhi.tablebookingapp.service.UserService;
+import com.vriddhi.tablebookingapp.service.UserServiceInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,21 +14,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
-    private UserService userService;
+    private UserServiceInterface userService;
 
     @GetMapping
     @Operation(summary = "Get all Users", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved Users",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = User.class))})
     })
-    public ResponseEntity<Iterable<UserResponseDTO>> getUsers() {
-        Iterable<UserResponseDTO> users = userService.getUsers();
+    public ResponseEntity<Set<UserResponseDTO>> getUsers() {
+        Set<UserResponseDTO> users = userService.getUsers();
+        log.info("Returning all users {}", users);
         return ResponseEntity.ok(users);
     }
 
@@ -59,7 +64,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId, @RequestBody User user) {
-        user.setUserId(userId);
+        user.setUserId(userId); //wrong logic what if user id passed is not right
         UserResponseDTO updatedUser = userService.saveUser(user);
         return ResponseEntity.ok(updatedUser);
     }

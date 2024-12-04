@@ -1,6 +1,5 @@
 package com.vriddhi.tablebookingapp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -28,12 +27,10 @@ public class RatingReview {
     @NonNull
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @JsonBackReference("restaurant-ratingReview")
     private Restaurant restaurant;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference("user-ratingReview")
     private User user;
 
     private int rating;

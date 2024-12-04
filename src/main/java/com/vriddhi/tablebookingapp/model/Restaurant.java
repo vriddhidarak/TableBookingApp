@@ -1,10 +1,9 @@
 package com.vriddhi.tablebookingapp.model;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,22 +26,21 @@ public class Restaurant {
     private String restaurantCity;
 
     @OneToMany(mappedBy = "restaurant")
-    @JsonManagedReference("restaurant-table")
-    @ToString.Exclude
     private List<Table> tables;
 
     @OneToMany(mappedBy = "restaurant")
-    @JsonManagedReference("restaurant-reservation")
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "restaurant")
-    @JsonManagedReference("restaurant-ratingReview")
     private List<RatingReview> ratingReviews;
 
 
     public Restaurant(long l, String testRestaurant) {
         this.restaurantId = l;
         this.restaurantName = testRestaurant;
+        this.tables = new ArrayList<>();
+        this.reservations = new ArrayList<>();
+        this.ratingReviews = new ArrayList<>();
 
     }
 }

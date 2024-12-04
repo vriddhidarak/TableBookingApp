@@ -1,5 +1,6 @@
 package com.vriddhi.tablebookingapp.dto;
 
+import com.vriddhi.tablebookingapp.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,10 @@
 package com.vriddhi.tablebookingapp.controller;
 
-import com.vriddhi.tablebookingapp.dto.ReservationDTO;
+import com.vriddhi.tablebookingapp.dto.ReservationRequestDTO;
 import com.vriddhi.tablebookingapp.dto.ReservationResponseDTO;
 import com.vriddhi.tablebookingapp.model.Reservation;
 import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.service.ReservationService;
+import com.vriddhi.tablebookingapp.service.ReservationServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class ReservationController {
 
     @Autowired
-    private ReservationService reservationService;
+    private ReservationServiceInterface reservationService;
 
     @GetMapping
     @Operation(summary = "Get all Reservation", responses = {
@@ -39,7 +39,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "200", description = "Successfully created Reservation",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reservation.class))})
     })
-    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationDTO reservation) {
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO reservation) {
         ReservationResponseDTO newReservation = reservationService.saveReservation(reservation);
         return ResponseEntity.ok(newReservation);
     }
@@ -68,9 +68,9 @@ public class ReservationController {
     @Operation(summary = "Delete Reservation", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted Reservation")
     })
-    public ResponseEntity<String> deleteReservation(@PathVariable Long reservationId) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long reservationId) {
         log.info("ReservationController.deleteReservation  {}", reservationId);
         reservationService.deleteReservation(reservationId);
-        return new ResponseEntity<>("Reservation deleted successfully", null, 200);
+        return ResponseEntity.noContent().build();
     }
 }

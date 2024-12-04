@@ -1,8 +1,9 @@
 package com.vriddhi.tablebookingapp.controller;
 
+import com.vriddhi.tablebookingapp.dto.RestaurantResponseDTO;
 import com.vriddhi.tablebookingapp.model.Restaurant;
 import com.vriddhi.tablebookingapp.model.Table;
-import com.vriddhi.tablebookingapp.service.RestaurantService;
+import com.vriddhi.tablebookingapp.service.RestaurantServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,14 +20,14 @@ import java.util.Optional;
 public class RestaurantController {
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceInterface restaurantService;
 
     @GetMapping
     @Operation(summary = "Get all restaurants", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved restaurants",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public List<Restaurant> getAllRestaurants() {
+    public List<RestaurantResponseDTO> getAllRestaurants() {
         return restaurantService.getAllRestaurants();
     }
 
@@ -35,8 +36,8 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Table.class))})
     })
-    public ResponseEntity<Restaurant> getRestaurant(@PathVariable Long restaurantId) {
-        Optional<Restaurant> restaurant = restaurantService.getRestaurantById(restaurantId);
+    public ResponseEntity<RestaurantResponseDTO> getRestaurant(@PathVariable Long restaurantId) {
+        Optional<RestaurantResponseDTO> restaurant = restaurantService.getRestaurantById(restaurantId);
         return restaurant.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -45,8 +46,8 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully created restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public ResponseEntity<Restaurant> createRestaurant(@RequestBody Restaurant restaurant) {
-        Restaurant newRestaurant = restaurantService.saveRestaurant(restaurant);
+    public ResponseEntity<RestaurantResponseDTO> createRestaurant(@RequestBody Restaurant restaurant) {
+        RestaurantResponseDTO newRestaurant = restaurantService.saveRestaurant(restaurant);
         return ResponseEntity.ok(newRestaurant);
     }
 
@@ -55,9 +56,9 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Successfully updated restaurant",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Restaurant.class))})
     })
-    public ResponseEntity<Restaurant> updateRestaurant(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
+    public ResponseEntity<RestaurantResponseDTO> updateRestaurant(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
         restaurant.setRestaurantId(restaurantId);
-        Restaurant updatedRestaurant = restaurantService.saveRestaurant(restaurant);
+        RestaurantResponseDTO updatedRestaurant = restaurantService.saveRestaurant(restaurant);
         return ResponseEntity.ok(updatedRestaurant);
     }
 

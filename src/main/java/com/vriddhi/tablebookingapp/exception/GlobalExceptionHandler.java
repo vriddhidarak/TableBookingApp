@@ -1,4 +1,3 @@
-// src/main/java/com/vriddhi/tablebookingapp/exception/GlobalExceptionHandler.java
 package com.vriddhi.tablebookingapp.exception;
 
 import org.springframework.http.HttpStatus;

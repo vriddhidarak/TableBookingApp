@@ -1,7 +1,10 @@
 package com.vriddhi.tablebookingapp;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.vriddhi.tablebookingapp.dto.LoginRequestDTO;
-import com.vriddhi.tablebookingapp.dto.UserResponseDTO;
+import com.vriddhi.tablebookingapp.dto.LoginResponseDTO;
 import com.vriddhi.tablebookingapp.model.User;
 import com.vriddhi.tablebookingapp.repository.UserRepository;
 import com.vriddhi.tablebookingapp.service.LoginService;
@@ -10,50 +13,99 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class LoginServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private LoginService loginService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testLoginUser_Success() {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("test@example.com", "password123");
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
+    public void testLoginUser_Success() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user@example.com", "password");
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setPassword("encodedPassword");
 
+        when(userRepository.findByEmail("user@example.com")).thenReturn(user);
+        when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(true);
 
-        UserResponseDTO result = loginService.loginUser(loginRequestDTO);
+        LoginResponseDTO response = loginService.loginUser(loginRequestDTO);
 
-
-        assertNotNull(result);
-        assertEquals("John Doe", result.getUserName());
-        verify(userRepository, times(1)).findByEmail("test@example.com");
+        assertNotNull(response);
+        assertEquals("user@example.com", response.getEmail());
     }
 
     @Test
-    void testLoginUser_Failure() {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("test@example.com", "wrongpassword");
-        User user = new User(1L, "John Doe", "test@example.com", "password123", "1234567890", "123 Street");
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
+    public void testLoginUser_Failed_IncorrectPassword() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user@example.com", "wrongPassword");
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setPassword("encodedPassword");
 
+        when(userRepository.findByEmail("user@example.com")).thenReturn(user);
+        when(passwordEncoder.matches("wrongPassword", "encodedPassword")).thenReturn(false);
 
-        UserResponseDTO result = loginService.loginUser(loginRequestDTO);
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
+    }
 
+    @Test
+    public void testLoginUser_Failed_UserNotFound() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("nonexistent@example.com", "password");
 
-        assertNull(result);
-        verify(userRepository, times(1)).findByEmail("test@example.com");
+        when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
+    }
+
+    @Test
+    public void testLoginUser_NullEmail() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(null, "password");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
+    }
+
+    @Test
+    public void testLoginUser_EmptyEmail() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("", "password");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
+    }
+
+    @Test
+    public void testLoginUser_NullPassword() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user@example.com", null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
+    }
+
+    @Test
+    public void testLoginUser_EmptyPassword() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user@example.com", "");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            loginService.loginUser(loginRequestDTO);
+        });
     }
 }
